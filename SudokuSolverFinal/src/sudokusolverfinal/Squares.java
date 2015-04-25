@@ -17,17 +17,17 @@ import javax.swing.text.PlainDocument;
 
 /**
  *
- * @author Jessica
+ * @author Brian Spann (rbs4ba) & Jessica Ya (jy2fv), Final Theory Project
  * based off of Nicholas Dunn's grid
  */
 public class Squares extends javax.swing.JPanel {
 
-    private JTextField c, n, e, s, w, ne, nw, se, sw;
+    private JTextField nw, n, ne, e, c, w, sw, s, se;
     private JTextField[] txtFields = new JTextField[]{
-        c, n, e, s, w, ne, nw, se, sw
+        nw, n, ne, e, c, w, sw, s, se
     };
     
-    private static final int BORDER_WIDTH = 3;
+    private static final int BORDER_WIDTH = 2;
     /**
      * Creates new form Squares
      */

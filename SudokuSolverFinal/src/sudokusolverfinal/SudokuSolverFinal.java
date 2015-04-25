@@ -1,12 +1,11 @@
 /*
-Brian Spann (rbs4ba) & Jessica Ya (jy2fv), Final Theory Project
+ * Brian Spann (rbs4ba) & Jessica Ya (jy2fv), Final Theory Project
  */
 package sudokusolverfinal;
 import java.util.Scanner;
 import java.io.File;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-//import javax.swing.JButton;
 
 public class SudokuSolverFinal {
     
@@ -36,19 +35,21 @@ public class SudokuSolverFinal {
     }
 
     public static void main(String[] args) {
-        // TODO code application logic here
+        //GUI CODE -----------------------------------------------------
         JFrame frame = new JFrame("");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JPanel panel = new JPanel();
+        JButtonClass jb = new JButtonClass("SOLVE");
+
         
-        //class Board needed
         panel.add(new Board());
-        //panel.add(new JButton(">")); //Check if JButton class required
+        panel.add(jb);
         panel.add(new Board());
         frame.add(panel);
         frame.pack();
         frame.setVisible(true);
-
+        
+        //LOGIC CODE ---------------------------------------------------
         String fileName = "";
 	try{
             fileName = args[0];

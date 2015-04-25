@@ -6,8 +6,7 @@
 package sudokusolverfinal;
 
 /**
- *
- * @author Jessica
+ *Brian Spann (rbs4ba) & Jessica Ya (jy2fv), Final Theory Project
  */
 public class SudokuSolverUI extends javax.swing.JFrame {
 

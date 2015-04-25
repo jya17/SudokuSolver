@@ -9,7 +9,7 @@ import java.awt.Color;
 import java.awt.GridLayout;
 /**
  *
- * @author Jessica
+ * @author Brian Spann (rbs4ba) & Jessica Ya (jy2fv), Final Theory Project
  * based off of Nicholas Dunn's grid
  */
 public class Board extends javax.swing.JPanel {
