@@ -1,5 +1,5 @@
 /*
-rian Spann (rbs4ba) & Jessica Ya (jy2fv), Final Theory Project
+ * Brian Spann (rbs4ba) & Jessica Ya (jy2fv), Final Theory Project
  */
 package sudokusolverfinal;
 import java.util.Scanner;
@@ -8,7 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
-
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 public class SudokuSolverFinal {
     
@@ -131,6 +132,21 @@ public class SudokuSolverFinal {
 
     public static void main(String[] args) {
         SudokuSolverFinal ssf1 = new SudokuSolverFinal();
+        //GUI CODE -----------------------------------------------------
+        JFrame frame = new JFrame("");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        JPanel panel = new JPanel();
+        JButtonClass jb = new JButtonClass("SOLVE");
+
+        
+        panel.add(new Board());
+        panel.add(jb);
+        panel.add(new Board());
+        frame.add(panel);
+        frame.pack();
+        frame.setVisible(true);
+        
+        //LOGIC CODE ---------------------------------------------------
         String fileName = "";
 	try{
             fileName = args[0];
