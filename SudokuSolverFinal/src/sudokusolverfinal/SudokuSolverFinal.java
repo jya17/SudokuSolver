@@ -129,22 +129,31 @@ public class SudokuSolverFinal {
             }
         }
     }
-
-    public static void main(String[] args) {
-        SudokuSolverFinal ssf1 = new SudokuSolverFinal();
-        //GUI CODE -----------------------------------------------------
+    
+    /**
+     * Creates the GUI Board
+     * @param values 
+     */
+    public static void createGUI(square[][] values, int n) {
+    //GUI CODE -----------------------------------------------------
         JFrame frame = new JFrame("");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JPanel panel = new JPanel();
         JButtonClass jb = new JButtonClass("SOLVE");
-
         
-        panel.add(new Board());
+        Board b = new Board(n);
+        Board b2 = new Board(n);
+        //put values from square[][] into Board
+        panel.add(b);
         panel.add(jb);
-        panel.add(new Board());
+        panel.add(b2);
         frame.add(panel);
         frame.pack();
         frame.setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        SudokuSolverFinal ssf1 = new SudokuSolverFinal();
         
         //LOGIC CODE ---------------------------------------------------
         String fileName = "";
@@ -261,7 +270,7 @@ public class SudokuSolverFinal {
             printBoard(board, numRows, numCols);
             //printConflicts(conflictsList, numRows, numCols);
             
-            
+            createGUI(board, numCols);
         }
     }
 }

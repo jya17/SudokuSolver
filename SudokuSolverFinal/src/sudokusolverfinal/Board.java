@@ -14,18 +14,26 @@ import java.awt.GridLayout;
  */
 
 public class Board extends javax.swing.JPanel {
-    private Squares[] grid = new Squares[9];
+    private Squares[] grid;// = new Squares[9];
     private Color[] backgrounds = {Color.darkGray, Color.lightGray};
     /**
      * Creates new form Board
      */
-    public Board() {
-        setLayout(new GridLayout(3, 3));
+    public Board(int n) {
+        System.out.println(";-;");
+        
+        grid = new Squares[n];
+        int sqrtVal = (int) Math.sqrt((double)n);
+        setLayout(new GridLayout(sqrtVal, sqrtVal));
         for(int i = 0; i < grid.length; i++) {
-            grid[i] = new Squares(backgrounds[i%2]);
+            grid[i] = new Squares(backgrounds[i%2], sqrtVal);
             add(grid[i]);
         }
         //initComponents();
+    }
+    
+    public Squares getSquares(int index) {
+        return grid[index];
     }
 
     /**

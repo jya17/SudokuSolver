@@ -8,13 +8,13 @@ package sudokusolverfinal;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Toolkit;
+//import java.awt.Toolkit;
 import javax.swing.BorderFactory;
-import javax.swing.JLabel;
+//import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.PlainDocument;
+//import javax.swing.text.AttributeSet;
+//import javax.swing.text.BadLocationException;
+//import javax.swing.text.PlainDocument;
 
 /**
  *
@@ -30,28 +30,34 @@ import javax.swing.text.PlainDocument;
 public class Squares extends javax.swing.JPanel {
 
     //private JTextField nw, n, ne, e, c, w, sw, s, se;
-    //private JTextField[] txtFields = new JTextField[]{
-    //    nw, n, ne, e, c, w, sw, s, se
+    private JTextField[] txtFields;// = new JTextField[]{
+        //nw, n, ne, e, c, w, sw, s, se
     //};
-    private JLabel nw, n, ne, e, c, w, sw, s, se;
-    private JLabel[] txtFields = new JLabel[]{
+    //private JLabel nw, n, ne, e, c, w, sw, s, se;
+    //private JLabel[] txtFields = new JLabel[]{
         
-    };
+    //};
     private static final int BORDER_WIDTH = 2;
     /**
      * Creates new form Squares
+     * @param background
      */
-    public Squares(Color background) {
-        setLayout(new GridLayout(3, 3));
-        initGUI();
+    public Squares(Color background, int s) { //int s is the sqrt(n)
+        
+        txtFields = new JTextField[(int) Math.pow((double) s, 2)];
+
+        setLayout(new GridLayout(s, s));
+        initGUI((int) Math.pow((double) s, 2));
         setBackground(background);
     }
 
-    private void initGUI() {
-        for (int i = 0; i < txtFields.length; i++) {
-        //txtFields[i] = new JTextField(1);
-        txtFields[i] = new JLabel("hi", 1);
+    private void initGUI(int n) {
+        
+        for (int i = 0; i < n; i++) {//for (int i = 0; i < txtFields.length; i++) {
+        txtFields[i] = new JTextField(1);
+        txtFields[i].setText("0");
         //txtFields[i].setDocument(new NumericalDocument()); //extends PlainDocument
+        txtFields[i].setEditable(false);
         add(txtFields[i]);  
     }
         setBorder(BorderFactory.createMatteBorder(BORDER_WIDTH,BORDER_WIDTH,BORDER_WIDTH,BORDER_WIDTH, Color.CYAN));
@@ -61,18 +67,24 @@ public class Squares extends javax.swing.JPanel {
         return new Dimension(100, 100); //try changing dimensions
     }
     
+    public JTextField getJTextField(int index) {
+        return txtFields[index];
+    }
+    /**
     public static class NumericalDocument extends PlainDocument {
         String numbers = "0123456789"; //0 necessary?
         @Override
-        public void insertString(int offs, String s, AttributeSet a) throws BadLocationException {
+        public void insertString(int offset, String s, AttributeSet a) throws BadLocationException {
             if (getLength() == 0 && s.length() == 1 && numbers.contains(s)) {
-                super.insertString(offs, s, a);
+                super.insertString(offset, s, a);
             }
             else {
                 Toolkit.getDefaultToolkit().beep();
             }
         }
     }
+    */
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
