@@ -154,7 +154,9 @@ public class SudokuSolverFinal {
                 for (int j = 0; j < root; j++) {      //chooses little row
                     for (int k = 0; k < root; k++) {     //chooses little col
                         int pos = (l*root*n)+ (j*n) + (i*root) + k;
-                        f[j*root+k].setText(Integer.toString(values[pos/n][pos%n].getValue()));
+                        if(values[pos/n][pos%n].getValue() != 0) {
+                            f[j*root+k].setText(Integer.toString(values[pos/n][pos%n].getValue()));
+                        }
                     }
                 }
             }
