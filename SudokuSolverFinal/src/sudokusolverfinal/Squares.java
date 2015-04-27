@@ -10,6 +10,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -20,13 +21,22 @@ import javax.swing.text.PlainDocument;
  * @author Brian Spann (rbs4ba) & Jessica Ya (jy2fv), Final Theory Project
  * based off of Nicholas Dunn's grid
  */
+
+/** TODO:
+ * Instead of inputting numbers, display number from a 2D array
+ * 
+ * 
+ */
 public class Squares extends javax.swing.JPanel {
 
-    private JTextField nw, n, ne, e, c, w, sw, s, se;
-    private JTextField[] txtFields = new JTextField[]{
-        nw, n, ne, e, c, w, sw, s, se
+    //private JTextField nw, n, ne, e, c, w, sw, s, se;
+    //private JTextField[] txtFields = new JTextField[]{
+    //    nw, n, ne, e, c, w, sw, s, se
+    //};
+    private JLabel nw, n, ne, e, c, w, sw, s, se;
+    private JLabel[] txtFields = new JLabel[]{
+        
     };
-    
     private static final int BORDER_WIDTH = 2;
     /**
      * Creates new form Squares
@@ -39,8 +49,9 @@ public class Squares extends javax.swing.JPanel {
 
     private void initGUI() {
         for (int i = 0; i < txtFields.length; i++) {
-        txtFields[i] = new JTextField(1);
-        txtFields[i].setDocument(new NumericalDocument()); //extends PlainDocument
+        //txtFields[i] = new JTextField(1);
+        txtFields[i] = new JLabel("hi", 1);
+        //txtFields[i].setDocument(new NumericalDocument()); //extends PlainDocument
         add(txtFields[i]);  
     }
         setBorder(BorderFactory.createMatteBorder(BORDER_WIDTH,BORDER_WIDTH,BORDER_WIDTH,BORDER_WIDTH, Color.CYAN));

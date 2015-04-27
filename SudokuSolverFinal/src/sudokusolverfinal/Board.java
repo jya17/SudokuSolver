@@ -12,6 +12,7 @@ import java.awt.GridLayout;
  * @author Brian Spann (rbs4ba) & Jessica Ya (jy2fv), Final Theory Project
  * based off of Nicholas Dunn's grid
  */
+
 public class Board extends javax.swing.JPanel {
     private Squares[] grid = new Squares[9];
     private Color[] backgrounds = {Color.darkGray, Color.lightGray};
