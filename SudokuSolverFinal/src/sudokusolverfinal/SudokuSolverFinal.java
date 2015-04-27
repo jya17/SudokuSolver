@@ -15,6 +15,7 @@ import javax.swing.JTextField;
 public class SudokuSolverFinal {
     
     public static square [][] board;
+    public static square [][] origBoard;
     public static Map<Integer,List<Integer>> conflictsList;
     public static JButtonClass jb;
     
@@ -223,6 +224,7 @@ public class SudokuSolverFinal {
             int sqrtN = (int)Math.sqrt(n);
             int curVal = 0;
             board = new square [numRows][numCols];
+            origBoard = new square[numRows][numCols];
             List<Integer> tempList = new ArrayList<Integer>();
             for(int i = 0; i < numRows; i++){
                 tempList.add(i);
@@ -231,13 +233,15 @@ public class SudokuSolverFinal {
 
              
             
-            
+            //Added code for origBoard
             for(int i = 0; i < numRows; i++){
                 for(int j = 0; j < numCols; j++){
                     //System.out.print("i: " + i + ", j: " + j + " = ");
                     square s1 = ssf1.new square(-1,-1,tempList);
+                    square s2 = ssf1.new square(-1, -1, tempList);
                     
                     board[i][j] = s1;
+                    origBoard[i][j] = s2;
                     if(fileScnr.hasNext()){  //might be able to remove this if stmt
                         tempLine = fileScnr.next();
                         tempLine = tempLine.trim();
@@ -248,14 +252,18 @@ public class SudokuSolverFinal {
                     }
                     curVal = Integer.parseInt(tempLine);
                     board[i][j].setValue(curVal);// = Integer.parseInt(tempLine);
+                    origBoard[i][j].setValue(curVal);
                     board[i][j].setPosition(i*numCols + j);
+                    origBoard[i][j].setPosition(i*numCols + j);
                     if(curVal != 0){
                         List<Integer> tempList2 = new ArrayList<Integer>();
                         tempList2.clear();
                         tempList2.add(curVal);
                         board[i][j].setOptions(tempList2);
+                        origBoard[i][j].setOptions(tempList2);
                     } else{
                         board[i][j].setOptions(tempList);
+                        origBoard[i][j].setOptions(tempList);
                     }
                 }
                 //System.out.println();
@@ -290,20 +298,16 @@ public class SudokuSolverFinal {
             printBoard(board, numRows, numCols);
             //printConflicts(conflictsList, numRows, numCols);
             
-            createGUI(board, numCols, "SOLVE");
+            //printBoard(origBoard, numRows, numCols);
+            
+            createGUI(origBoard, numCols, "SOLVE");
             /**
             //ActionListener for button clicked
             while(!jb.clicked()) {
                 //(run all the code to solve the problem)  
                 System.out.println("SOLVING!");
             }
-            System.out.println("CLICKED!");
-            
-            for(int i = 0; i < numCols; i++) {
-                for(int j = 0; j < numCols; j++) {
-                    board[i][j].setValue(0);
-                }
-            }   
+            System.out.println("CLICKED!");  
             
             createGUI(board, numCols, "SOLUTION"); //again
             */
