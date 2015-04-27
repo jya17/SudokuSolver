@@ -14,6 +14,8 @@ import javax.swing.JButton;
  * @author Brian Spann (rbs4ba) & Jessica Ya (jy2fv), Final Theory Project
  */
 public class JButtonClass extends javax.swing.JPanel {
+   
+    private boolean b = false;
     /**
      * Creates new form JButton
      */
@@ -22,10 +24,15 @@ public class JButtonClass extends javax.swing.JPanel {
         button.addActionListener(new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
+            b = true;
             //System.out.println("Button clicked");
         }
     });
         add(button);
+    }
+    
+    public boolean clicked() {
+        return b;
     }
 
     /**

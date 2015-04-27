@@ -20,20 +20,18 @@ public class Board extends javax.swing.JPanel {
      * Creates new form Board
      */
     public Board(int n) {
-        System.out.println(";-;");
         
         grid = new Squares[n];
         int sqrtVal = (int) Math.sqrt((double)n);
-        setLayout(new GridLayout(sqrtVal, sqrtVal));
+        setLayout(new GridLayout(sqrtVal, sqrtVal)); //organizes grid into sqrt(n)xsqrt(n) matrix
         for(int i = 0; i < grid.length; i++) {
-            grid[i] = new Squares(backgrounds[i%2], sqrtVal);
+            grid[i] = new Squares(backgrounds[i%2], sqrtVal); //creates a sqrt(n)xsqrt(n) matrix/square
             add(grid[i]);
         }
-        //initComponents();
     }
     
-    public Squares getSquares(int index) {
-        return grid[index];
+    public Squares[] getGrid() {
+        return grid;
     }
 
     /**

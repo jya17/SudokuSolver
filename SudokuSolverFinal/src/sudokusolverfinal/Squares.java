@@ -55,7 +55,7 @@ public class Squares extends javax.swing.JPanel {
         
         for (int i = 0; i < n; i++) {//for (int i = 0; i < txtFields.length; i++) {
         txtFields[i] = new JTextField(1);
-        txtFields[i].setText("0");
+        txtFields[i].setText(" ");
         //txtFields[i].setDocument(new NumericalDocument()); //extends PlainDocument
         txtFields[i].setEditable(false);
         add(txtFields[i]);  
@@ -66,9 +66,13 @@ public class Squares extends javax.swing.JPanel {
     public Dimension getPrefDimension() {
         return new Dimension(100, 100); //try changing dimensions
     }
-    
+    /**
     public JTextField getJTextField(int index) {
         return txtFields[index];
+    }
+    */
+    public JTextField[] getJTextField() {
+        return txtFields;
     }
     /**
     public static class NumericalDocument extends PlainDocument {

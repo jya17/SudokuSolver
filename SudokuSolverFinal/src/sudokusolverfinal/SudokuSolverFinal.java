@@ -10,11 +10,13 @@ import java.util.List;
 import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 public class SudokuSolverFinal {
     
     public static square [][] board;
     public static Map<Integer,List<Integer>> conflictsList;
+    public static JButtonClass jb;
     
     
     public class square{
@@ -133,15 +135,31 @@ public class SudokuSolverFinal {
     /**
      * Creates the GUI Board
      * @param values 
+     * @param n 
+     * @param line 
      */
-    public static void createGUI(square[][] values, int n) {
+    public static void createGUI(square[][] values, int n, String line) {
     //GUI CODE -----------------------------------------------------
         JFrame frame = new JFrame("");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JPanel panel = new JPanel();
-        JButtonClass jb = new JButtonClass("SOLVE");
+        jb = new JButtonClass(line);
+        int root = (int) Math.sqrt(n);
         
         Board b = new Board(n);
+        Squares[] box = b.getGrid();
+        for(int l = 0; l < root; l++){     //choose big row
+            for(int i = 0; i < root; i ++) {     //chooses big col
+                JTextField[] f = box[l*root+i].getJTextField();
+                for (int j = 0; j < root; j++) {      //chooses little row
+                    for (int k = 0; k < root; k++) {     //chooses little col
+                        int pos = (l*root*n)+ (j*n) + (i*root) + k;
+                        f[j*root+k].setText(Integer.toString(values[pos/n][pos%n].getValue()));
+                    }
+                }
+            }
+        }
+        
         Board b2 = new Board(n);
         //put values from square[][] into Board
         panel.add(b);
@@ -270,7 +288,23 @@ public class SudokuSolverFinal {
             printBoard(board, numRows, numCols);
             //printConflicts(conflictsList, numRows, numCols);
             
-            createGUI(board, numCols);
+            createGUI(board, numCols, "SOLVE");
+            /**
+            //ActionListener for button clicked
+            while(!jb.clicked()) {
+                //(run all the code to solve the problem)  
+                System.out.println("SOLVING!");
+            }
+            System.out.println("CLICKED!");
+            
+            for(int i = 0; i < numCols; i++) {
+                for(int j = 0; j < numCols; j++) {
+                    board[i][j].setValue(0);
+                }
+            }   
+            
+            createGUI(board, numCols, "SOLUTION"); //again
+            */
         }
     }
 }
