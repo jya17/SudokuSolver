@@ -54,7 +54,7 @@ public class Squares extends javax.swing.JPanel {
     private void initGUI(int n) {
         
         for (int i = 0; i < n; i++) {//for (int i = 0; i < txtFields.length; i++) {
-        txtFields[i] = new JTextField(1);
+        txtFields[i] = new JTextField(2);//(1); //changed to 2 to accept bigger #s
         txtFields[i].setText(" ");
         //txtFields[i].setDocument(new NumericalDocument()); //extends PlainDocument
         txtFields[i].setEditable(false);
