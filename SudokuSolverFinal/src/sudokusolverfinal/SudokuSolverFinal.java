@@ -17,6 +17,10 @@ public class SudokuSolverFinal {
     public static square [][] board;
     public static square [][] origBoard;
     public static Map<Integer,List<Integer>> conflictsList;
+    public static JFrame frame; //allows these to be changed outside the method
+    public static JPanel panel;
+    public static Board b;
+    public static Board b2;
     public static JButtonClass jb;
     
     
@@ -138,16 +142,18 @@ public class SudokuSolverFinal {
      * @param values 
      * @param n 
      * @param line 
+     * Either frame.dispose()/frame.setVisible(false) OR update current frame
      */
     public static void createGUI(square[][] values, int n, String line) {
     //GUI CODE -----------------------------------------------------
-        JFrame frame = new JFrame("");
+        frame = new JFrame("");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        JPanel panel = new JPanel();
+        //frame.setDefaultCloseOperation(JFrame.);
+        panel = new JPanel();
         jb = new JButtonClass(line);
         int root = (int) Math.sqrt(n);
         
-        Board b = new Board(n);
+        b = new Board(n);
         Squares[] box = b.getGrid();
         for(int l = 0; l < root; l++){     //choose big row
             for(int i = 0; i < root; i ++) {     //chooses big col
@@ -157,13 +163,15 @@ public class SudokuSolverFinal {
                         int pos = (l*root*n)+ (j*n) + (i*root) + k;
                         if(values[pos/n][pos%n].getValue() != 0) {
                             f[j*root+k].setText(Integer.toString(values[pos/n][pos%n].getValue()));
+                        } else {
+                            f[j*root+k].setText(" ");
                         }
                     }
                 }
             }
         }
         
-        Board b2 = new Board(n);
+        b2 = new Board(n);
         //put values from square[][] into Board
         panel.add(b);
         panel.add(jb);
@@ -301,16 +309,35 @@ public class SudokuSolverFinal {
             //printBoard(origBoard, numRows, numCols);
             
             createGUI(origBoard, numCols, "SOLVE");
-            /**
+            
             //ActionListener for button clicked
             while(!jb.clicked()) {
                 //(run all the code to solve the problem)  
                 System.out.println("SOLVING!");
             }
             System.out.println("CLICKED!");  
+        
+        //THIS CODE changes the second box of the GUI after solving the puzzle.    
+        int root = (int) Math.sqrt(n);    
+        Squares[] box = b2.getGrid();
+        for(int l = 0; l < root; l++){     //choose big row
+            for(int i = 0; i < root; i ++) {     //chooses big col
+                JTextField[] f = box[l*root+i].getJTextField();
+                for (int j = 0; j < root; j++) {      //chooses little row
+                    for (int k = 0; k < root; k++) {     //chooses little col
+                        int pos = (l*root*n)+ (j*n) + (i*root) + k;
+                        if(board[pos/n][pos%n].getValue() != 0) {
+                            f[j*root+k].setText("0");//Integer.toString(board[pos/n][pos%n].getValue()));
+                        } else {
+                            f[j*root+k].setText(" ");
+                        }
+                    }
+                }
+            }
+        }
             
-            createGUI(board, numCols, "SOLUTION"); //again
-            */
+            //createGUI(board, numCols, "SOLUTION"); //again
+            
         }
     }
 }
