@@ -23,8 +23,8 @@ import javax.swing.JTextField;
  */
 
 /** TODO:
- * Instead of inputting numbers, display number from a 2D array
- * 
+ * XInstead of inputting numbers, display number from a 2D array
+ * Display colors for nonominos
  * 
  */
 public class Squares extends javax.swing.JPanel {
@@ -33,14 +33,12 @@ public class Squares extends javax.swing.JPanel {
     private JTextField[] txtFields;// = new JTextField[]{
         //nw, n, ne, e, c, w, sw, s, se
     //};
-    //private JLabel nw, n, ne, e, c, w, sw, s, se;
-    //private JLabel[] txtFields = new JLabel[]{
-        
-    //};
+
     private static final int BORDER_WIDTH = 2;
     /**
      * Creates new form Squares
      * @param background
+     * @param s
      */
     public Squares(Color background, int s) { //int s is the sqrt(n)
         
@@ -56,6 +54,7 @@ public class Squares extends javax.swing.JPanel {
         for (int i = 0; i < n; i++) {//for (int i = 0; i < txtFields.length; i++) {
         txtFields[i] = new JTextField(2);//(1); //changed to 2 to accept bigger #s
         txtFields[i].setText(" ");
+        //txtFields[i].setBackground(Color.MAGENTA);
         //txtFields[i].setDocument(new NumericalDocument()); //extends PlainDocument
         txtFields[i].setEditable(false);
         add(txtFields[i]);  
