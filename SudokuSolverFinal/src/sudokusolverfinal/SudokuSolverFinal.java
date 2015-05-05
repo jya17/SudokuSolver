@@ -23,16 +23,16 @@ import javax.swing.JTextField;
  */
 public class SudokuSolverFinal {
     
-    public static square [][] board;
-    public static square [][] origBoard;
-    public static Map<Integer,List<Integer>> conflictsList;
-    public static Map<Integer,List<Integer>> sortedConflictsList;
-    public static SudokuSolverFinal ssf1 = new SudokuSolverFinal();
-    public static JFrame frame; //allows these to be changed outside the method
-    public static JPanel panel;
-    public static Board b;
-    public static Board b2;
-    public static JButtonClass jb;
+    private static square [][] board;
+    private static square [][] origBoard;
+    private static Map<Integer,List<Integer>> conflictsList;
+    private static Map<Integer,List<Integer>> sortedConflictsList;
+    private static SudokuSolverFinal ssf1 = new SudokuSolverFinal();
+    private static JFrame frame; //allows these to be changed outside the method
+    private static JPanel panel;
+    private static Board b;
+    private static Board b2;
+    private static JButtonClass jb;
     private static final Color[] COLORS = { 
         new Color(255,255,255), new Color(255,51,51), new Color(51,255,255), 
         new Color(255,153,51), new Color(51,153,255), new Color(255,255,51), 
@@ -287,6 +287,8 @@ public class SudokuSolverFinal {
         return listOfOptions;
     }
     
+
+    
     public static int[] solve(List<square> sortedList){
         int [] solVals = new int[sortedList.size()]; //function as visited
         int curPos = 0;
@@ -298,155 +300,48 @@ public class SudokuSolverFinal {
             }
         }
         
-        /*System.out.println("this is in \"solve\". this is the current contents of solVals. Should be given eles.");
-        for(int i = 0; i < curPos+1; i++){
-            System.out.println("@: " + sortedList.get(i).getPosition() + "= " + solVals[i]);
-        }*/
-        
         solVals = solve_recur(sortedList, solVals, curPos+1);
-        
-        /*System.out.println("this is in \"solve\". this is the final contents of solVals.");
-        for(int i = 0; i < solVals.length; i++){
-            System.out.println("@: " + sortedList.get(i).getPosition() + "= " + solVals[i]);
-        }*/
-        
         return solVals;
     }
     
     public static int[] solve_recur(List<square> sortedList, int[] solVals, int curPos){
         List<Integer> possibleVals = new ArrayList<Integer>();  
         possibleVals = sortedList.get(curPos).getOptions();     //list of possible values for the current cell
-        List<Integer> tryVal = new ArrayList<Integer>();        //an arraylist with a single value used to check the possibleVals
         List<Integer> oldOptions = new ArrayList<Integer>();
         int[] tempSols = new int[solVals.length];               //copy of current solutions
         for(int i = 0; i < curPos; i++){
             tempSols[i] = solVals[i];
         }
-        
-        System.out.println("the possible values for " + sortedList.get(24).getPosition() + " are " + sortedList.get(24).getOptions());
-        
-//        System.out.println("trying solve_recur");
-//        System.out.println("curPos: " + curPos + "; at spot: " + sortedList.get(curPos).getPosition() + " in the board");
-//        System.out.println("value = " + sortedList.get(curPos).getValue());
-//        System.out.print("possibleVals for current = ");
-//        System.out.println(sortedList.get(curPos).getOptions());
-        
-        /*System.out.println("##1##");
-        for(int i = curPos; i < sortedList.size(); i++){
-           System.out.print("possibleVals for " + i + " = ");
-           System.out.println(sortedList.get(i).getOptions()); 
-        }*/
-        
-        //###############################
-        //if(sortedList.get(curPos).getPosition() == 69 || sortedList.get(curPos).getPosition() == 10 || sortedList.get(curPos).getPosition() == 20)
-        System.out.println("looking at " + possibleVals + " as vals for pos: " + sortedList.get(curPos).getPosition() + " at curPos: " + curPos);
-        //###############################
-        
         oldOptions.clear();
         oldOptions = sortedList.get(curPos).getOptions();
         
         for(int x: possibleVals){
+            List<Integer> tryVal = new ArrayList<Integer>();        //an arraylist with a single value used to check the possibleVals
             tryVal.clear();
             tryVal.add(x);
             sortedList.get(curPos).setOptions(tryVal);
-            
-            /*System.out.println("##2##");
-            for(int i = curPos; i < sortedList.size(); i++){
-                System.out.print("possibleVals for " + i + " = ");
-                System.out.println(sortedList.get(i).getOptions()); 
-            }*/
-            
-            //tempSols[curPos] = x;
             //update options for all of the conflicts with curPos; this will return a boolean. if it fails,
-            
-            //###############################
-            //if(sortedList.get(curPos).getPosition() == 69 || sortedList.get(curPos).getPosition() == 10 || sortedList.get(curPos).getPosition() == 20)
-            System.out.println("among " + possibleVals + " we are trying value: " + x + " in updateOptions for pos: " + sortedList.get(curPos).getPosition());
-            //###############################
             
             boolSquare updateRes = updateOptions(sortedList, curPos);
             //if curPos = sortedList.size() && update=true; we have a solution
             
-            /*System.out.println("##3##");
-            for(int i = curPos; i < sortedList.size(); i++){
-                System.out.print("possibleVals for " + i + " = ");
-                System.out.println(sortedList.get(i).getOptions()); 
-            }*/
-            
-            //System.out.println("bouta go in the if with value: " + x);
-            //System.out.println(updateRes.updateResult);
-            /*for(int i = 0; i < updateRes.valuesList.size(); i++){
-                System.out.println(i + ": ");
-                System.out.println("value: " + updateRes.valuesList.get(i).value);
-                System.out.println("position: " + updateRes.valuesList.get(i).position);
-                System.out.println("options: " + updateRes.valuesList.get(i).options);
-            }*/
-            
             if(updateRes.updateResult == true){
-                
-                //###############################
-                //if(sortedList.get(curPos).getPosition() == 69 || sortedList.get(curPos).getPosition() == 10 || sortedList.get(curPos).getPosition() == 20)
-                System.out.println("we got a true result using : " + x + ", as the value for pos: " + sortedList.get(curPos).getPosition());
-                //###############################
-                
                 solVals[curPos] = x;
                 if(curPos == sortedList.size()-1){
-                    
-                    //###############################
-                    //if(sortedList.get(curPos).getPosition() == 69 || sortedList.get(curPos).getPosition() == 10 || sortedList.get(curPos).getPosition() == 20)
-                    System.out.println("found a solution");
-                    //###############################
-                    
                     return solVals;
                 } else{
-                    
-                    //###############################
-                    //if(sortedList.get(curPos).getPosition() == 69 || sortedList.get(curPos).getPosition() == 10 || sortedList.get(curPos).getPosition() == 20){
-                    System.out.println("looking at next position which is: " + sortedList.get(curPos+1).getPosition());
-                    //System.out.println("the updateRes next position is: " + updateRes.getValuesList().get(curPos+1).getPosition());
-                    
-                    System.out.println("conflicts of 21 are: ");
-                    for(int i = 0; i < conflictsList.get(20).size(); i++){
-                        System.out.print("we are looking at conflict: " + conflictsList.get(20).get(i) + " ");
-                        System.out.println(sortedList.get(sortedConflictsList.get(20).get(i)).getOptions());
-                    }
-                    
-                    System.out.println("-------------------------");//}
-                    //###############################
-                    
                     tempSols = solve_recur(updateRes.getValuesList(), solVals, curPos+1);//sortedList, solVals, curPos+1);//
                     if(tempSols[0] == -1){//means we failed
-                        
-                        //###############################
-                        //if(sortedList.get(curPos).getPosition() == 69 || sortedList.get(curPos).getPosition() == 10 || sortedList.get(curPos).getPosition() == 20){
-                        System.out.println("we failed with a -1");
-                        System.out.println("-------------------------");//}
-                        //###############################
-                        
                     } else{
-                        //System.out.println("we got a good recur call");
                         solVals = tempSols;
                         return solVals;
                     }
                 }
             } else{
-                
-                //###############################
-                //if(sortedList.get(curPos).getPosition() == 69 || sortedList.get(curPos).getPosition() == 10 || sortedList.get(curPos).getPosition() == 20)
-                System.out.println("we got a false result using : " + x + ", as the value for pos: " + sortedList.get(curPos).getPosition());
-                //###############################
-                
             }
         }
         
         sortedList.get(curPos).setOptions(oldOptions);
-        
-        //###############################
-        //if(sortedList.get(curPos).getPosition() == 69 || sortedList.get(curPos).getPosition() == 10 || sortedList.get(curPos).getPosition() == 20){
-        System.out.println("t.t....we failed and no value worked. means we need to go back up 1 level and try the next val");
-        System.out.println("curPos that no value worked for: " + sortedList.get(curPos).getPosition() + "(" + curPos + ")");//}
-        //###############################
-        
         int[] failedVals = new int[solVals.length];
         failedVals[0] = -1;
         return failedVals;
@@ -470,20 +365,15 @@ public class SudokuSolverFinal {
             tempList.get(i).setOptions(sortedList.get(i).getOptions());
         }
         
-        System.out.println("THIS IS INSIDE OF UPDATE");
-        if(curPos == 23){
-            System.out.println("we are about to update stuff for conflicts of: " + sortedList.get(23).getPosition());
-            System.out.println("the possible values of pos: " + tempList.get(24).getPosition() + " are: " + tempList.get(24).getOptions());
-        }
-        
-        List<Integer> listOfOptions = new ArrayList<Integer>();             //list of possible values for a given cell to return
-        List<Integer> valsOfConflicts = new ArrayList<Integer>();           //list of values of conflicts 
         List<Integer> conflictsOfVal = sortedConflictsList.get(sortedList.get(curPos).getPosition());//conflictsList.get(sortedList.get(curPos).getPosition());  //list of positions of conflicts (NOT THE SAME AS CURPOS)
         int singleVal = sortedList.get(curPos).getOptions().get(0);         //the single int value of what we are trying for the cur cell
         
         for(int x: conflictsOfVal){  //for every conflict's sorted position
+            List<Integer> listOfOptions = new ArrayList<Integer>();             //list of possible values for a given cell to return
+            List<Integer> valsOfConflicts = new ArrayList<Integer>();           //list of values of conflicts 
             listOfOptions.clear();
             valsOfConflicts.clear();
+            
             for(int i = 0; i < sortedList.get(x).getOptions().size(); i++){  //getting the all of the possible values for a single conflicts
                 valsOfConflicts.add(sortedList.get(x).getOptions().get(i));  //of the current cell
             }
@@ -494,27 +384,12 @@ public class SudokuSolverFinal {
             }
             tempList.get(x).setOptions(listOfOptions);
             
-            if(curPos == 23){
-                System.out.println("we are looking at conflict: " + tempList.get(x).getPosition());
-                //System.out.println("the possible values of pos: " + tempList.get(24).getPosition() + " are: " + tempList.get(24).getOptions());
-                for(int i = 0; i < conflictsOfVal.size(); i++){
-                    System.out.println("the possible values of pos: " + tempList.get(conflictsOfVal.get(i)).getPosition() + " are: " + tempList.get(conflictsOfVal.get(i)).getOptions());
-                    
-                }
-            }
-            
             if(listOfOptions.size() == 0){
-                
-                //###############################
-                //System.out.println("bool value for " + sortedList.get(x).getPosition() + " = " + "false");
-                //###############################
-                
                 result = false;
             } else{
-                //System.out.println("bool value for " + x + " = true");
             }
         }
-        
+
         boolSquare bS1 = ssf1.new boolSquare(tempList, result);
         return bS1;
     }
@@ -703,6 +578,12 @@ public class SudokuSolverFinal {
             }
             System.out.println("CLICKED!");  
             
+            
+            //START TIMER HERE
+            long startTime = System.currentTimeMillis();
+
+            
+            
             List<square> sortedList = new ArrayList<square>();
             for(int i = 0; i < numRows; i++){
                 for(int j = 0; j < numCols; j++){
@@ -727,14 +608,6 @@ public class SudokuSolverFinal {
                 sortedConflictsList.put(tempPos2, tempConf2);
             }
             
-            
-
-            for(int i = 0; i < conflictsList.get(20).size(); i++){
-                System.out.println("we are looking at conflict: " + conflictsList.get(20).get(i));
-                System.out.println(sortedList.get(sortedConflictsList.get(20).get(i)).getOptions());
-            }
-            
-            
             int[] solvedVals = new int[sortedList.size()];
             solvedVals = solve(sortedList);
             
@@ -751,9 +624,6 @@ public class SudokuSolverFinal {
                 tempJ = tempPos%numCols;
                 board[tempI][tempJ].setValue(sortedList.get(i).getValue());
             }
-            
-            //printBoard(board, numRows, numCols);
-            
             
             //THIS CODE changes the second box of the GUI after solving the puzzle.    
             int root = (int) Math.sqrt(n);    
@@ -779,6 +649,322 @@ public class SudokuSolverFinal {
             
             //createGUI(board, numCols, "SOLUTION"); //again
             
+            //STOP TIMER HERE
+            long endTime = System.currentTimeMillis();
+            System.out.println("time taken: " + (endTime - startTime)/1000.0 + " seconds");
+            
         }
     }
 }
+
+
+//    public static int[] solve(List<square> sortedList){
+//        int [] solVals = new int[sortedList.size()]; //function as visited
+//        int curPos = 0;
+//        //finds all of the vals that were already given
+//        for(int i = 0; i < sortedList.size(); i++){
+//            if(sortedList.get(i).getValue() != 0){
+//                solVals[i] = sortedList.get(i).getValue();
+//                curPos = i;
+//            }
+//        }
+//        
+//        /*System.out.println("this is in \"solve\". this is the current contents of solVals. Should be given eles.");
+//        for(int i = 0; i < curPos+1; i++){
+//            System.out.println("@: " + sortedList.get(i).getPosition() + "= " + solVals[i]);
+//        }*/
+//        
+//        solVals = solve_recur(sortedList, solVals, curPos+1);
+//        
+//        /*System.out.println("this is in \"solve\". this is the final contents of solVals.");
+//        for(int i = 0; i < solVals.length; i++){
+//            System.out.println("@: " + sortedList.get(i).getPosition() + "= " + solVals[i]);
+//        }*/
+//        
+//        return solVals;
+//    }
+    
+//    public static int[] solve_recur(List<square> sortedList, int[] solVals, int curPos){
+//        List<Integer> possibleVals = new ArrayList<Integer>();  
+//        possibleVals = sortedList.get(curPos).getOptions();     //list of possible values for the current cell
+//        List<Integer> tryVal = new ArrayList<Integer>();        //an arraylist with a single value used to check the possibleVals
+//        List<Integer> oldOptions = new ArrayList<Integer>();
+//        int[] tempSols = new int[solVals.length];               //copy of current solutions
+//        for(int i = 0; i < curPos; i++){
+//            tempSols[i] = solVals[i];
+//        }
+//        
+//        //System.out.println("the possible values for " + sortedList.get(24).getPosition() + " are " + sortedList.get(24).getOptions());
+//        
+////        System.out.println("trying solve_recur");
+////        System.out.println("curPos: " + curPos + "; at spot: " + sortedList.get(curPos).getPosition() + " in the board");
+////        System.out.println("value = " + sortedList.get(curPos).getValue());
+////        System.out.print("possibleVals for current = ");
+////        System.out.println(sortedList.get(curPos).getOptions());
+//        
+//        /*System.out.println("##1##");
+//        for(int i = curPos; i < sortedList.size(); i++){
+//           System.out.print("possibleVals for " + i + " = ");
+//           System.out.println(sortedList.get(i).getOptions()); 
+//        }*/
+//        
+//        //###############################
+//        //if(sortedList.get(curPos).getPosition() == 69 || sortedList.get(curPos).getPosition() == 10 || sortedList.get(curPos).getPosition() == 20)
+//        //System.out.println("looking at " + possibleVals + " as vals for pos: " + sortedList.get(curPos).getPosition() + " at curPos: " + curPos);
+//        //###############################
+//        
+//        oldOptions.clear();
+//        oldOptions = sortedList.get(curPos).getOptions();
+//        
+//        for(int x: possibleVals){
+//            tryVal.clear();
+//            tryVal.add(x);
+//            sortedList.get(curPos).setOptions(tryVal);
+//            
+//            /*System.out.println("##2##");
+//            for(int i = curPos; i < sortedList.size(); i++){
+//                System.out.print("possibleVals for " + i + " = ");
+//                System.out.println(sortedList.get(i).getOptions()); 
+//            }*/
+//            
+//            //tempSols[curPos] = x;
+//            //update options for all of the conflicts with curPos; this will return a boolean. if it fails,
+//            
+//            //###############################
+//            //if(sortedList.get(curPos).getPosition() == 69 || sortedList.get(curPos).getPosition() == 10 || sortedList.get(curPos).getPosition() == 20)
+//            //System.out.println("among " + possibleVals + " we are trying value: " + x + " in updateOptions for pos: " + sortedList.get(curPos).getPosition());
+//            //###############################
+//            
+//            boolSquare updateRes = updateOptions(sortedList, curPos);
+//            //if curPos = sortedList.size() && update=true; we have a solution
+//            
+//            /*System.out.println("##3##");
+//            for(int i = curPos; i < sortedList.size(); i++){
+//                System.out.print("possibleVals for " + i + " = ");
+//                System.out.println(sortedList.get(i).getOptions()); 
+//            }*/
+//            
+//            //System.out.println("bouta go in the if with value: " + x);
+//            //System.out.println(updateRes.updateResult);
+//            /*for(int i = 0; i < updateRes.valuesList.size(); i++){
+//                System.out.println(i + ": ");
+//                System.out.println("value: " + updateRes.valuesList.get(i).value);
+//                System.out.println("position: " + updateRes.valuesList.get(i).position);
+//                System.out.println("options: " + updateRes.valuesList.get(i).options);
+//            }*/
+//            
+//            if(updateRes.updateResult == true){
+//                
+//                //###############################
+//                //if(sortedList.get(curPos).getPosition() == 69 || sortedList.get(curPos).getPosition() == 10 || sortedList.get(curPos).getPosition() == 20)
+//                //System.out.println("we got a true result using : " + x + ", as the value for pos: " + sortedList.get(curPos).getPosition());
+//                //###############################
+//                
+//                solVals[curPos] = x;
+//                if(curPos == sortedList.size()-1){
+//                    
+//                    //###############################
+//                    //if(sortedList.get(curPos).getPosition() == 69 || sortedList.get(curPos).getPosition() == 10 || sortedList.get(curPos).getPosition() == 20)
+//                    //System.out.println("found a solution");
+//                    //###############################
+//                    
+//                    return solVals;
+//                } else{
+//                    
+//                    //###############################
+//                    //if(sortedList.get(curPos).getPosition() == 69 || sortedList.get(curPos).getPosition() == 10 || sortedList.get(curPos).getPosition() == 20){
+//                    //System.out.println("looking at next position which is: " + sortedList.get(curPos+1).getPosition());
+//                    //System.out.println("the updateRes next position is: " + updateRes.getValuesList().get(curPos+1).getPosition());
+//                    
+//                    //System.out.println("conflicts of 21 are: ");
+//                    //for(int i = 0; i < conflictsList.get(20).size(); i++){
+//                        //System.out.print("we are looking at conflict: " + conflictsList.get(20).get(i) + " ");
+//                        //System.out.println(updateRes.getValuesList().get(sortedConflictsList.get(20).get(i)).getOptions());
+//                    //}
+//                    
+//                    //System.out.println("-------------------------");//}
+//                    //###############################
+//                    
+//                    tempSols = solve_recur(updateRes.getValuesList(), solVals, curPos+1);//sortedList, solVals, curPos+1);//
+//                    if(tempSols[0] == -1){//means we failed
+//                        
+//                        //###############################
+//                        //if(sortedList.get(curPos).getPosition() == 69 || sortedList.get(curPos).getPosition() == 10 || sortedList.get(curPos).getPosition() == 20){
+//                        //System.out.println("we failed with a -1");
+//                        //System.out.println("-------------------------");//}
+//                        //###############################
+//                        
+//                    } else{
+//                        //System.out.println("we got a good recur call");
+//                        solVals = tempSols;
+//                        return solVals;
+//                    }
+//                }
+//            } else{
+//                
+//                //###############################
+//                //if(sortedList.get(curPos).getPosition() == 69 || sortedList.get(curPos).getPosition() == 10 || sortedList.get(curPos).getPosition() == 20)
+//                //System.out.println("we got a false result using : " + x + ", as the value for pos: " + sortedList.get(curPos).getPosition());
+//                //###############################
+//                
+//            }
+//        }
+//        
+//        sortedList.get(curPos).setOptions(oldOptions);
+//        
+//        //###############################
+//        //if(sortedList.get(curPos).getPosition() == 69 || sortedList.get(curPos).getPosition() == 10 || sortedList.get(curPos).getPosition() == 20){
+//        //System.out.println("t.t....we failed and no value worked. means we need to go back up 1 level and try the next val");
+//        //System.out.println("curPos that no value worked for: " + sortedList.get(curPos).getPosition() + "(" + curPos + ")");//}
+//        //###############################
+//        
+//        int[] failedVals = new int[solVals.length];
+//        failedVals[0] = -1;
+//        return failedVals;
+//    }
+    
+    
+//    public static boolSquare updateOptions(List<square> sortedList, int curPos){
+//        //what we want to do
+//        //we want to update all of the possibleOptions for all of the conflicts of sortedList(curpos).position
+//
+//        /*System.out.println("THIS IS INSIDE OF UPDATE");
+//        System.out.println("##1## \nconflicts of 21 are: ");
+//        for(int i = 0; i < conflictsList.get(20).size(); i++){
+//            System.out.print("we are looking at conflict: " + conflictsList.get(20).get(i) + " ");
+//            System.out.println(sortedList.get(sortedConflictsList.get(20).get(i)).getOptions());
+//        }*/
+//        
+//        
+//        boolean result = true;                                  //
+//        List<square> tempList = new ArrayList<square>();        //function as a copy of sortedList
+//        List<Integer> tempInts = new ArrayList<Integer>();      //just a pointless list used to create dummy square
+//        for(int i = 0; i < sortedList.size(); i++){
+//            tempInts.add(-1);
+//        }
+//        for(int i = 0; i < sortedList.size(); i++){
+//            square tempS = ssf1.new square(-1,-1,tempInts);
+//            tempList.add(tempS);
+//            tempList.get(i).setValue(sortedList.get(i).getValue());
+//            tempList.get(i).setPosition(sortedList.get(i).getPosition());
+//            tempList.get(i).setOptions(sortedList.get(i).getOptions());
+//        }
+//        
+//        /*System.out.println("##2## \nconflicts of 21 are: ");
+//        for(int i = 0; i < conflictsList.get(20).size(); i++){
+//            System.out.print("we are looking at conflict: " + conflictsList.get(20).get(i) + " ");
+//            System.out.println(tempList.get(sortedConflictsList.get(20).get(i)).getOptions());
+//        }
+//        
+//        
+//        if(curPos == 23){
+//            System.out.println("we are about to update stuff for conflicts of: " + sortedList.get(23).getPosition());
+//            System.out.println("the possible values of pos: " + tempList.get(24).getPosition() + " are: " + tempList.get(24).getOptions());
+//        }*/
+//
+//        
+//        List<Integer> conflictsOfVal = sortedConflictsList.get(sortedList.get(curPos).getPosition());//conflictsList.get(sortedList.get(curPos).getPosition());  //list of positions of conflicts (NOT THE SAME AS CURPOS)
+//        int singleVal = sortedList.get(curPos).getOptions().get(0);         //the single int value of what we are trying for the cur cell
+//        //int q = 0;
+//        List<Integer> conflictsOfValNormal = conflictsList.get(sortedList.get(curPos).getPosition());
+//        
+//        for(int x: conflictsOfVal){  //for every conflict's sorted position
+//            List<Integer> listOfOptions = new ArrayList<Integer>();             //list of possible values for a given cell to return
+//            List<Integer> valsOfConflicts = new ArrayList<Integer>();           //list of values of conflicts 
+//        
+//            
+//            /*System.out.println("LOOKING AT: " + x + " as a conflict with a real position of: " + conflictsOfValNormal.get(q));
+//            System.out.println("##3.1## \nconflicts of 21 when looking at conflict: " + x + " are: ");
+//            for(int i = 0; i < conflictsList.get(20).size(); i++){
+//                System.out.print("we are looking at conflict: " + conflictsList.get(20).get(i) + " ");
+//                System.out.println(tempList.get(sortedConflictsList.get(20).get(i)).getOptions());
+//            }*/
+//            
+//            listOfOptions.clear();
+//            
+//            /*System.out.println("##3.111## \nconflicts of 21 when looking at conflict: " + x + " are: ");
+//            for(int i = 0; i < conflictsList.get(20).size(); i++){
+//                System.out.print("we are looking at conflict: " + conflictsList.get(20).get(i) + " ");
+//                System.out.println(tempList.get(sortedConflictsList.get(20).get(i)).getOptions());
+//            }*/
+//            
+//            valsOfConflicts.clear();
+//            
+//            /*System.out.println("##3.11## \nconflicts of 21 when looking at conflict: " + x + " are: ");
+//            for(int i = 0; i < conflictsList.get(20).size(); i++){
+//                System.out.print("we are looking at conflict: " + conflictsList.get(20).get(i) + " ");
+//                System.out.println(tempList.get(sortedConflictsList.get(20).get(i)).getOptions());
+//            }*/
+//            
+//            for(int i = 0; i < sortedList.get(x).getOptions().size(); i++){  //getting the all of the possible values for a single conflicts
+//                valsOfConflicts.add(sortedList.get(x).getOptions().get(i));  //of the current cell
+//            }
+//            
+//            /*System.out.println("##3.12## \nconflicts of 21 when looking at conflict: " + x + " are: ");
+//            for(int i = 0; i < conflictsList.get(20).size(); i++){
+//                System.out.print("we are looking at conflict: " + conflictsList.get(20).get(i) + " ");
+//                System.out.println(tempList.get(sortedConflictsList.get(20).get(i)).getOptions());
+//            }*/
+//            
+//            //System.out.println("the possible options of: " + x + " are: " + valsOfConflicts);
+//            
+//            for(int y = 0; y < valsOfConflicts.size(); y++){
+//                if(valsOfConflicts.get(y) != singleVal){
+//                    listOfOptions.add(valsOfConflicts.get(y));
+//                }
+//            }
+//            
+//            /*System.out.println("the listOfOptions of: " + x + " are: " + listOfOptions);
+//            
+//            System.out.println("##3.2## \nconflicts of 21 when looking at conflict: " + x + " are: ");
+//            for(int i = 0; i < conflictsList.get(20).size(); i++){
+//                System.out.print("we are looking at conflict: " + conflictsList.get(20).get(i) + " ");
+//                System.out.println(tempList.get(sortedConflictsList.get(20).get(i)).getOptions());
+//            }*/
+//            
+//            tempList.get(x).setOptions(listOfOptions);
+//            
+//            /*System.out.println("##3.3## \nconflicts of 21 when looking at conflict: " + x + " are: ");
+//            for(int i = 0; i < conflictsList.get(20).size(); i++){
+//                System.out.print("we are looking at conflict: " + conflictsList.get(20).get(i) + " ");
+//                System.out.println(tempList.get(sortedConflictsList.get(20).get(i)).getOptions());
+//            }
+//            
+//            if(curPos == 23){
+//                System.out.println("we are looking at conflict: " + tempList.get(x).getPosition());
+//                //System.out.println("the possible values of pos: " + tempList.get(24).getPosition() + " are: " + tempList.get(24).getOptions());
+//                for(int i = 0; i < conflictsOfVal.size(); i++){
+//                    System.out.println("the possible values of pos: " + tempList.get(conflictsOfVal.get(i)).getPosition() + " are: " + tempList.get(conflictsOfVal.get(i)).getOptions());
+//                    
+//                }
+//            }*/
+//            
+//            if(listOfOptions.size() == 0){
+//                
+//                //###############################
+//                //System.out.println("bool value for " + sortedList.get(x).getPosition() + " = " + "false");
+//                //###############################
+//                
+//                result = false;
+//            } else{
+//                //System.out.println("bool value for " + x + " = true");
+//            }
+//            
+//            /*System.out.println("##3.4## \nconflicts of 21 when looking at conflict: " + x + " are: ");
+//            for(int i = 0; i < conflictsList.get(20).size(); i++){
+//                System.out.print("we are looking at conflict: " + conflictsList.get(20).get(i) + " ");
+//                System.out.println(tempList.get(sortedConflictsList.get(20).get(i)).getOptions());
+//            }*/
+//            //q++;
+//        }
+//        
+//        /*System.out.println("##4## \nconflicts of 21 are: ");
+//        for(int i = 0; i < conflictsList.get(20).size(); i++){
+//            System.out.print("we are looking at conflict: " + conflictsList.get(20).get(i) + " ");
+//            System.out.println(tempList.get(sortedConflictsList.get(20).get(i)).getOptions());
+//        }
+//        System.out.println("WE ARE LEAVING UPDATE");*/
+//        
+//        boolSquare bS1 = ssf1.new boolSquare(tempList, result);
+//        return bS1;
+//    }
