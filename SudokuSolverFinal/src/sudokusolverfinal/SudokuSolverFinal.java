@@ -600,25 +600,28 @@ public class SudokuSolverFinal {
              
             
             //gets positions for conflicts of a given cell
-            int rowQuad = -1;
-            int colQuad = -1;
+            int rowQuad = -1; 
+            int colQuad = -1;//
             for(int i = 0; i < numRows; i++){
                 for(int j = 0; j < numCols; j++){
                     List<Integer> tempConflicts = new ArrayList<Integer>();
                     tempConflicts.clear();
+                    //adds row and col as conflicts
                     for(int k = 0; k < numCols; k++){
                         if(j != k)
                             tempConflicts.add(i*numCols + k);
                         if(i != k)
                             tempConflicts.add(k*numRows + j);
-                    }
-                    rowQuad = (i/sqrtN);
-                    colQuad = (j/sqrtN);
-                    
-                    for(int k = rowQuad*sqrtN; k < (rowQuad+1)*sqrtN; k++){
-                        for(int l = colQuad*sqrtN; l < (colQuad+1)*sqrtN; l++){
-                            if(i != k && j != l)
-                                tempConflicts.add(k*numCols + l);
+                    } 
+                    if(color == false) { //normal board
+                        rowQuad = (i/sqrtN);
+                        colQuad = (j/sqrtN);
+                        
+                        for(int k = rowQuad*sqrtN; k < (rowQuad+1)*sqrtN; k++){
+                            for(int l = colQuad*sqrtN; l < (colQuad+1)*sqrtN; l++){
+                                if(i != k && j != l)
+                                    tempConflicts.add(k*numCols + l);
+                            }   
                         }
                     }
                     conflictsList.put(i*numCols+j, tempConflicts);
@@ -670,6 +673,22 @@ public class SudokuSolverFinal {
                 }
             }
             
+            //add same colored as conflicts
+            if(color == true) { //nonomino board
+                for(int i = 0; i < numRows; i++){
+                    for(int j = 0; j < numCols; j++){
+                        List<Integer> tempConflicts = conflictsList.get(i*numCols+j);
+                        for(int k = 0; k < numRows; k++) {
+                            for(int l = 0; l < numCols; l++) {
+                                if(i != k && j !=l && (board[i][j].getColor() == board[k][l].getColor())) { //if colors are the same
+                                    conflictsList.get(i*numCols+j).add(k*numCols + l);
+                                    //printConflicts(conflictsList, numRows, numCols);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             
             for(int i = 0; i < numRows; i++){
                 for(int j = 0; j < numCols; j++){                    
