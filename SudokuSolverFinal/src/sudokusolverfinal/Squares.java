@@ -23,8 +23,8 @@ import javax.swing.JTextField;
  */
 
 /** TODO:
- * Instead of inputting numbers, display number from a 2D array
- * 
+ * XInstead of inputting numbers, display number from a 2D array
+ * XDisplay colors for nonominos
  * 
  */
 public class Squares extends javax.swing.JPanel {
@@ -33,14 +33,46 @@ public class Squares extends javax.swing.JPanel {
     private JTextField[] txtFields;// = new JTextField[]{
         //nw, n, ne, e, c, w, sw, s, se
     //};
-    //private JLabel nw, n, ne, e, c, w, sw, s, se;
-    //private JLabel[] txtFields = new JLabel[]{
-        
-    //};
+
     private static final int BORDER_WIDTH = 2;
+    /*private static final Color[] COLORS = { 
+        new Color(255,255,255), new Color(255,51,51), new Color(51,255,255), 
+        new Color(255,153,51), new Color(51,153,255), new Color(255,255,51), 
+        new Color(51,51,255), new Color(153,255,51), new Color(153,51,255), 
+        new Color(51,255,51), new Color(255,51,255), new Color(51,255,153), 
+        new Color(255,51,153), new Color(255,153,153), new Color(153,255,255), 
+        new Color(255,204,153), new Color(153,204,255), new Color(255,255,153), 
+        new Color(153,153,255), new Color(204,255,153), new Color(204,153,255), 
+        new Color(153,255,153), new Color(255,153,255), new Color(153,255,204), 
+        new Color(255,153,204), new Color(204,0,0), new Color(0,204,204), 
+        new Color(204,102,0), new Color(0,102,204), new Color(204,102,0), 
+        new Color(0,102,204), new Color(204,204,0), new Color(0,0,204), 
+        new Color(102,204,0), new Color(102,0,204), new Color(0,204,0), 
+        new Color(204,0,204), new Color(0,204,102), new Color(204,0,102), 
+        new Color(255,102,102), new Color(102,255,255), new Color(255,178,102), 
+        new Color(102,178,255), new Color(255,255,102), new Color(102,102,255), 
+        new Color(178,255,102), new Color(178,102,255), new Color(102,255,102), 
+        new Color(255,102,255), new Color(102,255,178), new Color(255,102,178), 
+        new Color(153,0,0), new Color(0,153,153), new Color(153,76,0), 
+        new Color(0,76,153), new Color(153,153,0), new Color(0,0,153), 
+        new Color(76,153,0), new Color(76,0,153), new Color(0,153,0), 
+        new Color(153,0,153), new Color(0,153,76), new Color(153,0,76), 
+        new Color(255,0,0), new Color(0,255,255), new Color(255,128,0), 
+        new Color(0,128,255), new Color(255,255,0), new Color(0,0,255), 
+        new Color(128,255,0), new Color(127,0,255), new Color(0,255,0), 
+        new Color(255,0,255), new Color(0,255,128), new Color(255,0,127), 
+        new Color(255,204,204), new Color(204,255,255), new Color(255,229,204), 
+        new Color(204,229,255), new Color(255,255,204), new Color(204,204,255), 
+        new Color(229,255,204), new Color(229,204,255), new Color(204,255,204), 
+        new Color(255,204,255), new Color(204,255,229), new Color(255,205,229) 
+    
+    };
+    */
+    
     /**
      * Creates new form Squares
      * @param background
+     * @param s
      */
     public Squares(Color background, int s) { //int s is the sqrt(n)
         
@@ -56,11 +88,12 @@ public class Squares extends javax.swing.JPanel {
         for (int i = 0; i < n; i++) {//for (int i = 0; i < txtFields.length; i++) {
         txtFields[i] = new JTextField(2);//(1); //changed to 2 to accept bigger #s
         txtFields[i].setText(" ");
+        //txtFields[i].setBackground(COLORS[i]);
         //txtFields[i].setDocument(new NumericalDocument()); //extends PlainDocument
         txtFields[i].setEditable(false);
         add(txtFields[i]);  
     }
-        setBorder(BorderFactory.createMatteBorder(BORDER_WIDTH,BORDER_WIDTH,BORDER_WIDTH,BORDER_WIDTH, Color.CYAN));
+        setBorder(BorderFactory.createMatteBorder(BORDER_WIDTH,BORDER_WIDTH,BORDER_WIDTH,BORDER_WIDTH, Color.BLACK));
     }
     
     public Dimension getPrefDimension() {
@@ -70,10 +103,23 @@ public class Squares extends javax.swing.JPanel {
     public JTextField getJTextField(int index) {
         return txtFields[index];
     }
+     * @return 
     */
-    public JTextField[] getJTextField() {
+    public JTextField[] getJTextFieldArray() {
         return txtFields;
     }
+    /*
+    public Color[] getColorArray() {
+        return COLORS;
+    }
+    
+    public Color getColor(int i) {
+        return COLORS[i];
+    }
+    public void setColor(int i) {
+        txtFields[i].setBackground(COLORS[i]);
+    }
+    */
     /**
     public static class NumericalDocument extends PlainDocument {
         String numbers = "0123456789"; //0 necessary?
