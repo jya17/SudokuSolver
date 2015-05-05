@@ -2,6 +2,7 @@
  * Brian Spann (rbs4ba) & Jessica Ya (jy2fv), Final Theory Project
  */
 package sudokusolverfinal;
+import java.awt.Color;
 import java.util.Scanner;
 import java.io.File;
 import java.util.HashMap;
@@ -12,6 +13,11 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+/** TODO:
+ * At beginning of while loop in main, clear all the boards holding old test case values
+ * XAdd stuff for nonominos
+ * XChange to only read in nonominos file when color = true
+ */
 public class SudokuSolverFinal {
     
     public static square [][] board;
@@ -22,12 +28,43 @@ public class SudokuSolverFinal {
     public static Board b;
     public static Board b2;
     public static JButtonClass jb;
-    
+    private static final Color[] COLORS = { 
+        new Color(255,255,255), new Color(255,51,51), new Color(51,255,255), 
+        new Color(255,153,51), new Color(51,153,255), new Color(255,255,51), 
+        new Color(51,51,255), new Color(153,255,51), new Color(153,51,255), 
+        new Color(51,255,51), new Color(255,51,255), new Color(51,255,153), 
+        new Color(255,51,153), new Color(255,153,153), new Color(153,255,255), 
+        new Color(255,204,153), new Color(153,204,255), new Color(255,255,153), 
+        new Color(153,153,255), new Color(204,255,153), new Color(204,153,255), 
+        new Color(153,255,153), new Color(255,153,255), new Color(153,255,204), 
+        new Color(255,153,204), new Color(204,0,0), new Color(0,204,204), 
+        new Color(204,102,0), new Color(0,102,204), new Color(204,102,0), 
+        new Color(0,102,204), new Color(204,204,0), new Color(0,0,204), 
+        new Color(102,204,0), new Color(102,0,204), new Color(0,204,0), 
+        new Color(204,0,204), new Color(0,204,102), new Color(204,0,102), 
+        new Color(255,102,102), new Color(102,255,255), new Color(255,178,102), 
+        new Color(102,178,255), new Color(255,255,102), new Color(102,102,255), 
+        new Color(178,255,102), new Color(178,102,255), new Color(102,255,102), 
+        new Color(255,102,255), new Color(102,255,178), new Color(255,102,178), 
+        new Color(153,0,0), new Color(0,153,153), new Color(153,76,0), 
+        new Color(0,76,153), new Color(153,153,0), new Color(0,0,153), 
+        new Color(76,153,0), new Color(76,0,153), new Color(0,153,0), 
+        new Color(153,0,153), new Color(0,153,76), new Color(153,0,76), 
+        new Color(255,0,0), new Color(0,255,255), new Color(255,128,0), 
+        new Color(0,128,255), new Color(255,255,0), new Color(0,0,255), 
+        new Color(128,255,0), new Color(127,0,255), new Color(0,255,0), 
+        new Color(255,0,255), new Color(0,255,128), new Color(255,0,127), 
+        new Color(255,204,204), new Color(204,255,255), new Color(255,229,204), 
+        new Color(204,229,255), new Color(255,255,204), new Color(204,204,255), 
+        new Color(229,255,204), new Color(229,204,255), new Color(204,255,204), 
+        new Color(255,204,255), new Color(204,255,229), new Color(255,205,229) 
+    };
     
     public class square{
         private int value; //value for the square on the board
         private int position; //decimal val of the position
         private List<Integer> options;
+        private int c; ////for nonominos
         
         public square(int value, int position, List<Integer> options){
             this.value = value;
@@ -51,6 +88,12 @@ public class SudokuSolverFinal {
         }
         public void setOptions(List<Integer> options){
             this.options = options;
+        }
+        public int getColor() { ////for nonominos
+            return c;
+        }
+        public void setColor(int index) {
+            this.c = index;
         }
     }
     
@@ -144,11 +187,10 @@ public class SudokuSolverFinal {
      * @param line 
      * Either frame.dispose()/frame.setVisible(false) OR update current frame
      */
-    public static void createGUI(square[][] values, int n, String line) {
+    public static void createGUI(square[][] values, int n, String line, boolean nonominos) {
     //GUI CODE -----------------------------------------------------
         frame = new JFrame("");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //frame.setDefaultCloseOperation(JFrame.);
         panel = new JPanel();
         jb = new JButtonClass(line);
         int root = (int) Math.sqrt(n);
@@ -157,7 +199,7 @@ public class SudokuSolverFinal {
         Squares[] box = b.getGrid();
         for(int l = 0; l < root; l++){     //choose big row
             for(int i = 0; i < root; i ++) {     //chooses big col
-                JTextField[] f = box[l*root+i].getJTextField();
+                JTextField[] f = box[l*root+i].getJTextFieldArray();
                 for (int j = 0; j < root; j++) {      //chooses little row
                     for (int k = 0; k < root; k++) {     //chooses little col
                         int pos = (l*root*n)+ (j*n) + (i*root) + k;
@@ -165,6 +207,9 @@ public class SudokuSolverFinal {
                             f[j*root+k].setText(Integer.toString(values[pos/n][pos%n].getValue()));
                         } else {
                             f[j*root+k].setText(" ");
+                        }
+                        if(nonominos == true) {
+                            f[j*root+k].setBackground(COLORS[values[pos/n][pos%n].getColor()]);
                         }
                     }
                 }
@@ -195,6 +240,7 @@ public class SudokuSolverFinal {
 	System.out.println("Using the following text file as an input source: " + fileName + "\n");
 		
 	String tempLine = "";
+        String tempArr[] = {"0","0"}; //for nonominos
 	Scanner fileScnr = null;
 	File theFile = new File(fileName);
 	try{
@@ -208,22 +254,40 @@ public class SudokuSolverFinal {
 	int numRows = 0;
         int numCols = 0;
         int n = 0;
+        boolean color = false; //for nonominos
 	
         while(fileScnr.hasNext()){
             //Detect board size
             if(fileScnr.hasNext()){
-		tempLine = fileScnr.nextLine();
+		tempLine = fileScnr.next();
 		tempLine = tempLine.trim();
             }
+            
             while(tempLine.isEmpty()){
 		tempLine = fileScnr.nextLine();
 		tempLine = tempLine.trim();
             }
-            n = Integer.parseInt(tempLine);
+            n = Integer.parseInt(tempLine); //nonominos
             if(n <= 0){
                 System.out.println("\nA \"0\" was detected. \nExiting");
                 return;
 	    }
+            //Check if normal or nonomino board
+            if(fileScnr.hasNext()){
+		tempLine = fileScnr.next();
+		tempLine = tempLine.trim();
+            }
+            
+            while(tempLine.isEmpty()){
+		tempLine = fileScnr.nextLine();
+		tempLine = tempLine.trim();
+            }
+            
+            if(Integer.parseInt(tempLine) == -2) { //for nonominos
+                color = true;
+            } else { 
+               color = false;
+            }
             
             //If didnt exit, then continue w/ the solver w/ a valid board
             
@@ -231,6 +295,7 @@ public class SudokuSolverFinal {
             numCols = n;
             int sqrtN = (int)Math.sqrt(n);
             int curVal = 0;
+            int curColor = 0; //nonominos
             board = new square [numRows][numCols];
             origBoard = new square[numRows][numCols];
             List<Integer> tempList = new ArrayList<Integer>();
@@ -258,7 +323,16 @@ public class SudokuSolverFinal {
                         tempLine = fileScnr.next();
                         tempLine = tempLine.trim();
                     }
-                    curVal = Integer.parseInt(tempLine);
+                    int index = tempLine.indexOf(","); //nonominos
+                    if(index != -1) { //
+                        String num = tempLine.substring(0, index); //
+                        curColor = Integer.parseInt(tempLine.substring(index+1)); //
+                        curVal = Integer.parseInt(num);//
+                        board[i][j].setColor(curColor);//
+                        origBoard[i][j].setColor(curColor); //
+                    } else {
+                        curVal = Integer.parseInt(tempLine);
+                    }
                     board[i][j].setValue(curVal);// = Integer.parseInt(tempLine);
                     origBoard[i][j].setValue(curVal);
                     board[i][j].setPosition(i*numCols + j);
@@ -308,7 +382,7 @@ public class SudokuSolverFinal {
             
             //printBoard(origBoard, numRows, numCols);
             
-            createGUI(origBoard, numCols, "SOLVE");
+            createGUI(origBoard, numCols, "SOLVE", color);
             
             //ActionListener for button clicked
             while(!jb.clicked()) {
@@ -317,19 +391,25 @@ public class SudokuSolverFinal {
             }
             System.out.println("CLICKED!");  
         
+        //CODE TO SOLVE SUDOKU
+            //jb.changeText("SOLVED");
+            
         //THIS CODE changes the second box of the GUI after solving the puzzle.    
         int root = (int) Math.sqrt(n);    
         Squares[] box = b2.getGrid();
         for(int l = 0; l < root; l++){     //choose big row
             for(int i = 0; i < root; i ++) {     //chooses big col
-                JTextField[] f = box[l*root+i].getJTextField();
+                JTextField[] f = box[l*root+i].getJTextFieldArray();
                 for (int j = 0; j < root; j++) {      //chooses little row
                     for (int k = 0; k < root; k++) {     //chooses little col
                         int pos = (l*root*n)+ (j*n) + (i*root) + k;
                         if(board[pos/n][pos%n].getValue() != 0) {
-                            f[j*root+k].setText("0");//Integer.toString(board[pos/n][pos%n].getValue()));
+                            f[j*root+k].setText(Integer.toString(board[pos/n][pos%n].getValue()));
                         } else {
                             f[j*root+k].setText(" ");
+                        }
+                        if(color == true) {
+                            f[j*root+k].setBackground(COLORS[board[pos/n][pos%n].getColor()]);
                         }
                     }
                 }

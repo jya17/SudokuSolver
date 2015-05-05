@@ -16,11 +16,12 @@ import javax.swing.JButton;
 public class JButtonClass extends javax.swing.JPanel {
    
     private boolean b = false;
+    private JButton button;
     /**
      * Creates new form JButton
      */
     public JButtonClass(String s) {
-        JButton button = new JButton(s);
+        button = new JButton(s);
         button.addActionListener(new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
@@ -34,7 +35,12 @@ public class JButtonClass extends javax.swing.JPanel {
     public boolean clicked() {
         return b;
     }
-
+    /*
+    public void changeText(String solved) {
+        button.setText(solved);
+    }
+    */
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
