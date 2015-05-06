@@ -23,6 +23,7 @@ import javax.swing.JTextField;
  */
 public class SudokuSolverFinal {
     
+    private static baseNode start; //DL
     private static square [][] board;
     private static square [][] origBoard;
     private static Map<Integer,List<Integer>> conflictsList;
@@ -70,14 +71,12 @@ public class SudokuSolverFinal {
         private node right;
         private node up;
         private node down;
-        private int include;
         
-        public node(node left, node right, node up, node down, int include){
+        public node(node left, node right, node up, node down){
             this.left = left;
             this.right = right;
             this.up = up;
             this.down = down;
-            this.include = include;
         }
         public node getLeft(){
             return left;
@@ -103,20 +102,30 @@ public class SudokuSolverFinal {
         public void setDown(node down){
             this.down = down;
         }
-        public int getInclude() {
-            return include;
-        }
-        public void setInclude(int include) {
-            this.include = include;
-        }
     }
     public class baseNode extends node{ //make all col and row headers as base nodes
+        private int cand;
+        private boolean sat;
         private String name;
         private int numNodes;
-        public baseNode(node left, node right, node up, node down, int include, String name, int numNodes){
-            super(left, right, up, down, include);
+        public baseNode(node left, node right, node up, node down, int cand, boolean sat, String name, int numNodes){
+            super(left, right, up, down);
+            this.cand = cand;
+            this.sat = sat;
             this.name = name;
             this.numNodes = numNodes;
+        }        
+        public int getCand() {
+            return cand;
+        }
+        public void setCand(int cand) {
+            this.cand = cand;
+        }
+        public boolean getSat() {
+            return sat;
+        }
+        public void setSat(boolean sat) {
+            this.sat = sat;
         }
         public String getName(){
             return name;
@@ -202,7 +211,13 @@ public class SudokuSolverFinal {
  /*
     START CODING HERE:
     */   
+    public static void createArrayList(int size) { //read in file
+        
+    }
     
+    public static void createGrid(baseNode start, int size) {
+        int numCols = (int) (Math.pow(size, 2) * 4) + 1; // + 1 for baseNode row and col
+    }
     
     
     
