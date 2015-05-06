@@ -65,6 +65,65 @@ public class SudokuSolverFinal {
         new Color(255,204,255), new Color(204,255,229), new Color(255,205,229) 
     };
     
+    public class node{
+        private node left;
+        private node right;
+        private node up;
+        private node down;
+        
+        public node(node left, node right, node up, node down){
+            this.left = left;
+            this.right = right;
+            this.up = up;
+            this.down = down;
+        }
+        public node getLeft(){
+            return left;
+        }
+        public void setLeft(node left){
+            this.left = left;
+        }
+        public node getRight(){
+            return right;
+        }
+        public void setRight(node right){
+            this.right = right;
+        }
+        public node getUp(){
+            return up;
+        }
+        public void setUp(node up){
+            this.up = up;
+        }
+        public node getDown(){
+            return down;
+        }
+        public void setDown(node down){
+            this.down = down;
+        }
+    }
+    public class baseNode extends node{
+        private String name;
+        private int numNodes;
+        public baseNode(node left, node right, node up, node down, String name, int numNodes){
+            super(left, right, up, down);
+            this.name = name;
+            this.numNodes = numNodes;
+        }
+        public String getName(){
+            return name;
+        }
+        public void setName(String name){
+            this.name = name;
+        }
+        public int getNumNodes(){
+            return numNodes;
+        }
+        public void setNumNodes(int numNodes){
+            this.numNodes = numNodes;
+        }
+    }
+    
     public class square implements Comparable<square>{
         private int value; //value for the square on the board
         private int position; //decimal val of the position
@@ -288,6 +347,8 @@ public class SudokuSolverFinal {
     }
     
 
+    
+    
     
     public static int[] solve(List<square> sortedList){
         int [] solVals = new int[sortedList.size()]; //function as visited
