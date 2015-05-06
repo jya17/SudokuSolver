@@ -70,12 +70,14 @@ public class SudokuSolverFinal {
         private node right;
         private node up;
         private node down;
+        private int include;
         
-        public node(node left, node right, node up, node down){
+        public node(node left, node right, node up, node down, int include){
             this.left = left;
             this.right = right;
             this.up = up;
             this.down = down;
+            this.include = include;
         }
         public node getLeft(){
             return left;
@@ -101,12 +103,18 @@ public class SudokuSolverFinal {
         public void setDown(node down){
             this.down = down;
         }
+        public int getInclude() {
+            return include;
+        }
+        public void setInclude(int include) {
+            this.include = include;
+        }
     }
-    public class baseNode extends node{
+    public class baseNode extends node{ //make all col and row headers as base nodes
         private String name;
         private int numNodes;
-        public baseNode(node left, node right, node up, node down, String name, int numNodes){
-            super(left, right, up, down);
+        public baseNode(node left, node right, node up, node down, String name, int numNodes, int include){
+            super(left, right, up, down, include);
             this.name = name;
             this.numNodes = numNodes;
         }
@@ -190,6 +198,16 @@ public class SudokuSolverFinal {
             this.updateResult = updateResult;
         }
     }
+   
+ /*
+    START CODING HERE:
+    */   
+    
+    
+    
+    
+    
+    
     
     
     public static List<baseNode> solve(List<node> sortedList){
