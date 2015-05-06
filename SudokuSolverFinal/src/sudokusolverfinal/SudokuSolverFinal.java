@@ -191,6 +191,34 @@ public class SudokuSolverFinal {
         }
     }
     
+    
+    public static List<baseNode> solve(List<node> sortedList){
+        List<baseNode> solNodes = new ArrayList<baseNode>((sortedList.size()-1)/4); //will hold all of the baseNodes for a row for the solution
+        
+        for(int i = 0; i < solNodes.size(); i++){
+            baseNode dummNode = ssf1.new baseNode(null, null, null, null, 0, "dummy node", 0, )
+        }
+        
+        solNodes = solve_recur(sortedList, solNodes);
+        return solNodes;
+    }
+    
+    public static List<baseNode> solve_recur(List<node> sortedList, List<baseNode> solNodes){
+    
+        
+        
+        
+        return solNodes;
+    }
+    
+    
+   
+    
+    
+    
+    
+    
+    
     public static void printBoard(square [][] numBoard, int rows, int cols){
         System.out.println("-------------------");
         for(int i = 0; i < rows; i++){
@@ -350,112 +378,112 @@ public class SudokuSolverFinal {
     
     
     
-    public static int[] solve(List<square> sortedList){
-        int [] solVals = new int[sortedList.size()]; //function as visited
-        int curPos = 0;
-        //finds all of the vals that were already given
-        for(int i = 0; i < sortedList.size(); i++){
-            if(sortedList.get(i).getValue() != 0){
-                solVals[i] = sortedList.get(i).getValue();
-                curPos = i;
-            } else{
-                solVals[i] = 0;
-            }
-        }
-        
-        solVals = solve_recur(sortedList, solVals, curPos+1);
-        return solVals;
-    }
-    
-    public static int[] solve_recur(List<square> sortedList, int[] solVals, int curPos){
-        List<Integer> possibleVals = new ArrayList<Integer>();  
-        possibleVals = sortedList.get(curPos).getOptions();     //list of possible values for the current cell
-        List<Integer> oldOptions = new ArrayList<Integer>();
-        int[] tempSols = new int[solVals.length];               //copy of current solutions
-        for(int i = 0; i < solVals.length; i++){
-            tempSols[i] = solVals[i];
-        }
-        oldOptions.clear();
-        oldOptions = sortedList.get(curPos).getOptions();
-        
-        for(int x: possibleVals){
-            List<Integer> tryVal = new ArrayList<Integer>();        //an arraylist with a single value used to check the possibleVals
-            tryVal.clear();
-            tryVal.add(x);
-            sortedList.get(curPos).setOptions(tryVal);
-            //update options for all of the conflicts with curPos; this will return a boolean. if it fails,
-            
-            boolSquare updateRes = updateOptions(sortedList, curPos);
-            //if curPos = sortedList.size() && update=true; we have a solution
-            
-            if(updateRes.updateResult == true){
-                solVals[curPos] = x;
-                if(curPos == sortedList.size()-1){
-                    return solVals;
-                } else{
-                    tempSols = solve_recur(updateRes.getValuesList(), solVals, curPos+1);//sortedList, solVals, curPos+1);//
-                    if(tempSols[0] == -1){//means we failed
-                    } else{
-                        solVals = tempSols;
-                        return solVals;
-                    }
-                }
-            } else{
-            }
-        }
-        
-        sortedList.get(curPos).setOptions(oldOptions);
-        int[] failedVals = new int[solVals.length];
-        failedVals[0] = -1;
-        return failedVals;
-    }
-    
-    public static boolSquare updateOptions(List<square> sortedList, int curPos){
-        //what we want to do
-        //we want to update all of the possibleOptions for all of the conflicts of sortedList(curpos).position
-
-        boolean result = true;                                  //
-        List<square> tempList = new ArrayList<square>();        //function as a copy of sortedList
-        List<Integer> tempInts = new ArrayList<Integer>();      //just a pointless list used to create dummy square
-        for(int i = 0; i < sortedList.size(); i++){
-            tempInts.add(-1);
-        }
-        for(int i = 0; i < sortedList.size(); i++){
-            square tempS = ssf1.new square(-1,-1,tempInts);
-            tempList.add(tempS);
-            tempList.get(i).setValue(sortedList.get(i).getValue());
-            tempList.get(i).setPosition(sortedList.get(i).getPosition());
-            tempList.get(i).setOptions(sortedList.get(i).getOptions());
-        }
-        
-        List<Integer> conflictsOfVal = sortedConflictsList.get(sortedList.get(curPos).getPosition());//conflictsList.get(sortedList.get(curPos).getPosition());  //list of positions of conflicts (NOT THE SAME AS CURPOS)
-        int singleVal = sortedList.get(curPos).getOptions().get(0);         //the single int value of what we are trying for the cur cell
-        
-        for(int x: conflictsOfVal){  //for every conflict's sorted position
-            List<Integer> listOfOptions = new ArrayList<Integer>();             //list of possible values for a given cell to return
-            List<Integer> valsOfConflicts = new ArrayList<Integer>();           //list of values of conflicts 
-            listOfOptions.clear();
-            valsOfConflicts.clear();
-            
-            for(int i = 0; i < sortedList.get(x).getOptions().size(); i++){  //getting the all of the possible values for a single conflicts
-                valsOfConflicts.add(sortedList.get(x).getOptions().get(i));  //of the current cell
-            }
-            for(int y = 0; y < valsOfConflicts.size(); y++){
-                if(valsOfConflicts.get(y) != singleVal){
-                    listOfOptions.add(valsOfConflicts.get(y));
-                }
-            }
-            tempList.get(x).setOptions(listOfOptions);
-            
-            if(listOfOptions.size() == 0){
-                result = false;
-            } else{
-            }
-        }
-
-        boolSquare bS1 = ssf1.new boolSquare(tempList, result);
-        return bS1;
-    }
+//    public static int[] solve(List<square> sortedList){
+//        int [] solVals = new int[sortedList.size()]; //function as visited
+//        int curPos = 0;
+//        //finds all of the vals that were already given
+//        for(int i = 0; i < sortedList.size(); i++){
+//            if(sortedList.get(i).getValue() != 0){
+//                solVals[i] = sortedList.get(i).getValue();
+//                curPos = i;
+//            } else{
+//                solVals[i] = 0;
+//            }
+//        }
+//        
+//        solVals = solve_recur(sortedList, solVals, curPos+1);
+//        return solVals;
+//    }
+//    
+//    public static int[] solve_recur(List<square> sortedList, int[] solVals, int curPos){
+//        List<Integer> possibleVals = new ArrayList<Integer>();  
+//        possibleVals = sortedList.get(curPos).getOptions();     //list of possible values for the current cell
+//        List<Integer> oldOptions = new ArrayList<Integer>();
+//        int[] tempSols = new int[solVals.length];               //copy of current solutions
+//        for(int i = 0; i < solVals.length; i++){
+//            tempSols[i] = solVals[i];
+//        }
+//        oldOptions.clear();
+//        oldOptions = sortedList.get(curPos).getOptions();
+//        
+//        for(int x: possibleVals){
+//            List<Integer> tryVal = new ArrayList<Integer>();        //an arraylist with a single value used to check the possibleVals
+//            tryVal.clear();
+//            tryVal.add(x);
+//            sortedList.get(curPos).setOptions(tryVal);
+//            //update options for all of the conflicts with curPos; this will return a boolean. if it fails,
+//            
+//            boolSquare updateRes = updateOptions(sortedList, curPos);
+//            //if curPos = sortedList.size() && update=true; we have a solution
+//            
+//            if(updateRes.updateResult == true){
+//                solVals[curPos] = x;
+//                if(curPos == sortedList.size()-1){
+//                    return solVals;
+//                } else{
+//                    tempSols = solve_recur(updateRes.getValuesList(), solVals, curPos+1);//sortedList, solVals, curPos+1);//
+//                    if(tempSols[0] == -1){//means we failed
+//                    } else{
+//                        solVals = tempSols;
+//                        return solVals;
+//                    }
+//                }
+//            } else{
+//            }
+//        }
+//        
+//        sortedList.get(curPos).setOptions(oldOptions);
+//        int[] failedVals = new int[solVals.length];
+//        failedVals[0] = -1;
+//        return failedVals;
+//    }
+//    
+//    public static boolSquare updateOptions(List<square> sortedList, int curPos){
+//        //what we want to do
+//        //we want to update all of the possibleOptions for all of the conflicts of sortedList(curpos).position
+//
+//        boolean result = true;                                  //
+//        List<square> tempList = new ArrayList<square>();        //function as a copy of sortedList
+//        List<Integer> tempInts = new ArrayList<Integer>();      //just a pointless list used to create dummy square
+//        for(int i = 0; i < sortedList.size(); i++){
+//            tempInts.add(-1);
+//        }
+//        for(int i = 0; i < sortedList.size(); i++){
+//            square tempS = ssf1.new square(-1,-1,tempInts);
+//            tempList.add(tempS);
+//            tempList.get(i).setValue(sortedList.get(i).getValue());
+//            tempList.get(i).setPosition(sortedList.get(i).getPosition());
+//            tempList.get(i).setOptions(sortedList.get(i).getOptions());
+//        }
+//        
+//        List<Integer> conflictsOfVal = sortedConflictsList.get(sortedList.get(curPos).getPosition());//conflictsList.get(sortedList.get(curPos).getPosition());  //list of positions of conflicts (NOT THE SAME AS CURPOS)
+//        int singleVal = sortedList.get(curPos).getOptions().get(0);         //the single int value of what we are trying for the cur cell
+//        
+//        for(int x: conflictsOfVal){  //for every conflict's sorted position
+//            List<Integer> listOfOptions = new ArrayList<Integer>();             //list of possible values for a given cell to return
+//            List<Integer> valsOfConflicts = new ArrayList<Integer>();           //list of values of conflicts 
+//            listOfOptions.clear();
+//            valsOfConflicts.clear();
+//            
+//            for(int i = 0; i < sortedList.get(x).getOptions().size(); i++){  //getting the all of the possible values for a single conflicts
+//                valsOfConflicts.add(sortedList.get(x).getOptions().get(i));  //of the current cell
+//            }
+//            for(int y = 0; y < valsOfConflicts.size(); y++){
+//                if(valsOfConflicts.get(y) != singleVal){
+//                    listOfOptions.add(valsOfConflicts.get(y));
+//                }
+//            }
+//            tempList.get(x).setOptions(listOfOptions);
+//            
+//            if(listOfOptions.size() == 0){
+//                result = false;
+//            } else{
+//            }
+//        }
+//
+//        boolSquare bS1 = ssf1.new boolSquare(tempList, result);
+//        return bS1;
+//    }
 
     public static void main(String[] args) {
         
