@@ -297,6 +297,8 @@ public class SudokuSolverFinal {
             if(sortedList.get(i).getValue() != 0){
                 solVals[i] = sortedList.get(i).getValue();
                 curPos = i;
+            } else{
+                solVals[i] = 0;
             }
         }
         
@@ -309,7 +311,7 @@ public class SudokuSolverFinal {
         possibleVals = sortedList.get(curPos).getOptions();     //list of possible values for the current cell
         List<Integer> oldOptions = new ArrayList<Integer>();
         int[] tempSols = new int[solVals.length];               //copy of current solutions
-        for(int i = 0; i < curPos; i++){
+        for(int i = 0; i < solVals.length; i++){
             tempSols[i] = solVals[i];
         }
         oldOptions.clear();
@@ -575,18 +577,8 @@ public class SudokuSolverFinal {
             }
             
 
-            /*for(int i = 0; i < n; i++){
-                for(int j = 0; j < n; j++){
-                    System.out.println("(" + i + ", " + j + "): " + board[i][j].options);
-                }
-            }*/
 
 
-
-            
-            //printBoard(board, numRows, numCols);
-            //printConflicts(conflictsList, numRows, numCols);
-            //printBoard(origBoard, numRows, numCols);
             
             createGUI(origBoard, numCols, "SOLVE", color);
             
