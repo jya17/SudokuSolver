@@ -113,7 +113,7 @@ public class SudokuSolverFinal {
     public class baseNode extends node{ //make all col and row headers as base nodes
         private String name;
         private int numNodes;
-        public baseNode(node left, node right, node up, node down, String name, int numNodes, int include){
+        public baseNode(node left, node right, node up, node down, int include, String name, int numNodes){
             super(left, right, up, down, include);
             this.name = name;
             this.numNodes = numNodes;
@@ -211,18 +211,23 @@ public class SudokuSolverFinal {
     
     
     public static List<baseNode> solve(List<node> sortedList){
-        List<baseNode> solNodes = new ArrayList<baseNode>((sortedList.size()-1)/4); //will hold all of the baseNodes for a row for the solution
+        List<baseNode> solNodes = new ArrayList<baseNode>(); //will hold all of the baseNodes for a row for the solution
+        int[] satConts = new int[(sortedList.size()-1)/4];
         
-        for(int i = 0; i < solNodes.size(); i++){
-            baseNode dummNode = ssf1.new baseNode(null, null, null, null, 0, "dummy node", 0, )
+        for(int i = 0; i < (sortedList.size()-1)/4; i++){
+            baseNode dummyNode = ssf1.new baseNode(null, null, null, null, 0, "dummy node", 0);
+            solNodes.add(dummyNode);
+            satConts[i] = 0;
         }
         
-        solNodes = solve_recur(sortedList, solNodes);
+        solNodes = solve_recur(sortedList, solNodes, satConts);
         return solNodes;
     }
     
-    public static List<baseNode> solve_recur(List<node> sortedList, List<baseNode> solNodes){
-    
+    public static List<baseNode> solve_recur(List<node> sortedList, List<baseNode> solNodes, int[] satConts){
+        
+        
+        
         
         
         
