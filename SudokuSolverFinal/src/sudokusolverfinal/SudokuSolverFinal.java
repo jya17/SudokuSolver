@@ -211,11 +211,8 @@ public class SudokuSolverFinal {
  /*
     START CODING HERE:
     */   
-    public static void createArrayList(int size) { //read in file
-        
-    }
     
-    public static void createGrid(baseNode start, int size) {
+    public static void createGrid(baseNode start, ArrayList<List> aList, int size) {
         int numCols = (int) (Math.pow(size, 2) * 4) + 1; // + 1 for baseNode row and col
     }
     
@@ -503,7 +500,6 @@ public class SudokuSolverFinal {
 	System.out.println("Using the following text file as an input source: " + fileName + "\n");
 		
 	String tempLine = "";
-        String tempArr[] = {"0","0"}; //for nonominos
 	Scanner fileScnr = null;
 	File theFile = new File(fileName);
 	try{
@@ -556,6 +552,59 @@ public class SudokuSolverFinal {
             
             numRows = n;
             numCols = n;
+            
+            int regionCap = (int) Math.sqrt(n);
+            int sectionCap = (int) (Math.pow(n, 2)); 
+            int colsCap = sectionCap * 4;//DL
+            int rowsCap = (int) (Math.pow(n, 3));
+            int[][] gridDL = new int[rowsCap][colsCap];
+            for(int i = 0; i < rowsCap; i++){
+                for(int j = 0; j < colsCap; j++){
+                    gridDL[i][j] = 0; //initialize to 0s
+                }  
+            }
+            
+            for(int col = 0; col < sectionCap; col++){
+                for(int row = col*n; row < (col*n) + n; row++) {
+                    gridDL[row][col] = 1;
+                }
+            }
+
+            for(int col = sectionCap; col < (sectionCap*2); col++) {
+                for(int row = ((col - sectionCap)/n)*sectionCap; row < ((col-sectionCap)/n)*sectionCap + sectionCap; row++) {
+                    if(row%n == col%n) { 
+                        gridDL[row][col] = 1;
+                    }
+
+                }
+            }
+            
+            for(int col = sectionCap*2; col < sectionCap*3; col++) {
+                for(int count = 0; count < n; count++) {
+                    gridDL[(sectionCap*count) + (col-(2*sectionCap))][col] = 1;
+                }
+            }
+            
+            //PRINTING gridDL
+            for(int i = 0; i < regionCap; i++) {
+                for(int j = 0; j < regionCap; j++) {
+                    for(int k = 0; k < regionCap; k++) {
+                        for(int l = 0; l < regionCap; l++) {
+                            for(int m = 0; m < n; m++) {
+                                gridDL[i*(regionCap*sectionCap) + (j*sectionCap) + (k*regionCap*n) + (l*n) + m][(i*regionCap*n) + (k*n) + m + (regionCap*sectionCap)] = 1;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            for(int row = 0; row < rowsCap; row++) {
+                for(int col = 0; col < sectionCap*4; col++) {
+                    System.out.print(gridDL[row][col] + " ");
+                }
+                System.out.println();
+            }
+            
             int sqrtN = (int)Math.sqrt(n);
             int curVal = 0;
             int curColor = 0; //nonominos
