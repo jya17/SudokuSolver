@@ -230,21 +230,8 @@ public class SudokuSolverFinal {
             this.updateResult = updateResult;
         }
     }
-   
- /*
-    START CODING HERE:
-    */   
-    
-    public static void createGrid(baseNode start, ArrayList<List> aList, int size) {
-        int numCols = (int) (Math.pow(size, 2) * 4) + 1; // + 1 for baseNode row and col
-    }
-    
-    
-    
-    
-    
-    
-    
+
+
     public static List<node> solve(List<baseNode> sortedList){
         List<node> solNodes = new ArrayList<node>(); //will hold all of the baseNodes for a row for the solution
         int[] satConts = new int[(sortedList.size()-1)/4];
