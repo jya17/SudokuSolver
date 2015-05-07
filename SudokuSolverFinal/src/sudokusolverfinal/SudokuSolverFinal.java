@@ -5,13 +5,13 @@ package sudokusolverfinal;
 import java.awt.Color;
 import java.util.Scanner;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Stack;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -800,14 +800,19 @@ public class SudokuSolverFinal {
             fileScnr = new Scanner(theFile);
 	} catch(Exception e){
             System.out.println("Could not view the file: " + fileName + ". \nExiting");
-            return;
+            //return;
         }
-      
         
 	int numRows = 0;
         int numCols = 0;
         int n = 0;
         boolean color = false; //for nonominos
+        Map<Integer, Integer> colorMap = new HashMap<Integer, Integer>();
+        int regionCap = 0;
+        int sectionCap = 0; 
+        int colsCap = 0;//DL
+        int rowsCap = 0;
+        int[][] gridDL = new int[0][0];
 	
         while(fileScnr.hasNext()){
             //Detect board size
@@ -823,7 +828,7 @@ public class SudokuSolverFinal {
             n = Integer.parseInt(tempLine); //nonominos
             if(n <= 0){
                 System.out.println("\nA \"0\" was detected. \nExiting");
-                return;
+                //return;
 	    }
             //Check if normal or nonomino board
             if(fileScnr.hasNext()){
@@ -847,11 +852,11 @@ public class SudokuSolverFinal {
             numRows = n;
             numCols = n;
             
-            int regionCap = (int) Math.sqrt(n);
-            int sectionCap = (int) (Math.pow(n, 2)); 
-            int colsCap = sectionCap * 4;//DL
-            int rowsCap = (int) (Math.pow(n, 3));
-            int[][] gridDL = new int[rowsCap][colsCap];
+            regionCap = (int) Math.sqrt(n);
+            sectionCap = (int) (Math.pow(n, 2)); 
+            colsCap = sectionCap * 4;//DL
+            rowsCap = (int) (Math.pow(n, 3));
+            gridDL = new int[rowsCap][colsCap];
             for(int i = 0; i < rowsCap; i++){
                 for(int j = 0; j < colsCap; j++){
                     gridDL[i][j] = 0; //initialize to 0s
@@ -891,16 +896,54 @@ public class SudokuSolverFinal {
                     }
                 }
             }
+            
+            int curColor = 0;
+            for(int i = 0; i < numRows; i++){
+                for(int j = 0; j < numCols; j++){
+                    if(fileScnr.hasNext()){  //might be able to remove this if stmt
+                        tempLine = fileScnr.next();
+                        tempLine = tempLine.trim();
+                    }
+                    while(tempLine.isEmpty()){
+                        tempLine = fileScnr.next();
+                        tempLine = tempLine.trim();
+                    }
+                    int index = tempLine.indexOf(","); //nonominos
+                    if(index != -1) { 
+                        String num = tempLine.substring(0, index); 
+                        curColor = Integer.parseInt(tempLine.substring(index+1));
+                        colorMap.put((i*n) + j, curColor);   
+                    }
+                    }  
+                } //for cols
+        //for rows=
+        
+            if(color == true) { //Section 4 of 2Darray
+                //colorMap.put((i*n) + j, curColor);
+                for(int i = 0; i < rowsCap; i++) {
+                    int region = colorMap.get(i/n);
+                    gridDL[i][(sectionCap*3) + (region*n) + (1%n)] = 1;
+                }
+            }
+            
+            for(int row = 0; row < rowsCap; row++) {
+                for(int col = sectionCap*3; col < sectionCap*4; col++) {
+                 System.out.print(gridDL[row][col] + " ");
+                }
+                System.out.println();
+            }
+        }     
             //PRINTING gridDL
             /*
             for(int row = 0; row < rowsCap; row++) {
                 for(int col = 0; col < sectionCap*4; col++) {
-                    //System.out.print(gridDL[row][col] + " ");
+                 System.out.print(gridDL[row][col] + " ");
                 }
-                //System.out.println();
+                System.out.println();
             }
             */
-                        
+
+        
             //Create row of baseNodes
             baseNode start = ssf1.new baseNode(null, null, null, null, -99, false, "start", 0, 0, 0); //DL
             //public baseNode(node left, node right, node up, node down, int cand, boolean sat, String name, int numNodes)
@@ -1006,13 +1049,22 @@ public class SudokuSolverFinal {
             
             baseNode tempBaseR = ssf1.new baseNode(null, null, null, null, 0, false, "start", 0, 0, 0);
             tempBaseR.setDown(start.getDown());
-            Map<Integer, Integer> colorMap = new HashMap<Integer, Integer>();
             
             
             node current = ssf1.new node(null, null, null, null);
             current.setDown(start.getDown());
             node tempCurRow = ssf1.new node(null, null, null, null);
             tempCurRow.setDown(start.getDown());
+            
+        try {
+                fileScnr = new Scanner(theFile);
+            } catch (FileNotFoundException e) {
+                System.out.println("Could not view the file: " + fileName + ". \nExiting");
+                return;
+         }
+        while(fileScnr.hasNext()) {
+            fileScnr.next();
+            fileScnr.next();
             //Added code for origBoard
             for(int i = 0; i < numRows; i++){
                 for(int j = 0; j < numCols; j++){
@@ -1036,7 +1088,7 @@ public class SudokuSolverFinal {
                         curVal = Integer.parseInt(num);
                         board[i][j].setColor(curColor);
                         origBoard[i][j].setColor(curColor); 
-                        colorMap.put((i*n) + j, curColor);
+                        //colorMap.put((i*n) + j, curColor);
                         
                         
                         
@@ -1110,38 +1162,16 @@ public class SudokuSolverFinal {
 //            }
             
             
-            if(color == true) { //Section 4 of 2Darray
-                for(int i = 0; i < regionCap; i++) {
-                    for(int j = 0; j < regionCap; j++) {
-                        for(int k = 0; k < regionCap; k++) {
-                            for(int l = 0; l < regionCap; l++) {
-                                for(int m = 0; m < n; m++) {
-                                    //gridDL[i*(regionCap*sectionCap) + (j*sectionCap) + (k*regionCap*n) + (l*n) + m][(i*regionCap*n) + (k*n) + m + (regionCap*sectionCap)] = 1;
-                                   //if statement to see if color matches
-                                    gridDL[i][regionCap*sectionCap + k*n + i%n] = 1;
-                                }   
-                            }
-                        }
-                    }
-                }
-            }
-            
-            if(color == true) { //Section 4 of 2Darray
-                //colorMap.put((i*n) + j, curColor);
-                for(int i = 0; i < rowsCap; i++) {
-                    int region = colorMap.get(i/n);
-                    gridDL[i][(sectionCap*3) + (region*n) + (1%n)] = 1;
-                }
-            }
+
             //PRINT
-            
+            /*
             for(int row = 0; row < rowsCap; row++) {
-                for(int col = 0; col < sectionCap*4; col++) {
+                for(int col = sectionCap*3; col < sectionCap*4; col++) {
                     System.out.print(gridDL[row][col] + " ");
                 }
                 System.out.println();
             }
-            
+            */
             //Count the number in a column
             baseNode countCol = ssf1.new baseNode(null, null, null, null, 0, false, "count", 0, 0, 0);
             countCol.setRight(start.getRight());
@@ -1477,7 +1507,9 @@ public class SudokuSolverFinal {
             System.out.println("time taken: " + (endTime - startTime)/1000.0 + " seconds");
             
         }
+        
     }
+    
 }
 
 
