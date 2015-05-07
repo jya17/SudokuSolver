@@ -1027,6 +1027,9 @@ public class SudokuSolverFinal {
                         board[i][j].setColor(curColor);
                         origBoard[i][j].setColor(curColor); 
                         colorMap.put((i*n) + j, curColor);
+                        
+                        
+                        
                     } else {
                         curVal = Integer.parseInt(tempLine); //normal board
                     }
@@ -1112,15 +1115,23 @@ public class SudokuSolverFinal {
                     }
                 }
             }
+            
+            if(color == true) { //Section 4 of 2Darray
+                //colorMap.put((i*n) + j, curColor);
+                for(int i = 0; i < rowsCap; i++) {
+                    int region = colorMap.get(i/n);
+                    gridDL[i][(sectionCap*3) + (region*n) + (1%n)] = 1;
+                }
+            }
             //PRINT
-            /*
+            
             for(int row = 0; row < rowsCap; row++) {
                 for(int col = 0; col < sectionCap*4; col++) {
                     System.out.print(gridDL[row][col] + " ");
                 }
                 System.out.println();
             }
-            */
+            
             //Count the number in a column
             baseNode countCol = ssf1.new baseNode(null, null, null, null, 0, false, "count", 0, 0, 0);
             countCol.setRight(start.getRight());
