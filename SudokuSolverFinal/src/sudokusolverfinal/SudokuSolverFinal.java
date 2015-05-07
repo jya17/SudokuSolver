@@ -265,53 +265,153 @@ public class SudokuSolverFinal {
             curPos++;
         }
         if(sortedList.get(curPos).getDown() == null){ //failed somewhere. need to go back up a level
-            
+            List<node> tempFail = new ArrayList<node>(); //will hold temp possible solutions. or indication that we failed
+            for(int j = 0; j < 1; j++){
+                baseNode dummyNode = ssf1.new baseNode(null, null, null, null, 0, false, "dummy node", 0);
+                tempFail.add(dummyNode);
+            }
+            tempFail.get(0).setVal(-10);
+            return tempFail;
         } else{ //didnt fail. try adding the row to the sols
             sortedList.get(curPos).setSat(true);
             baseNode colNode = sortedList.get(curPos); //baseNode of the column we are about to cover
+            node rowNode = colNode;
+            int tempPossibs = sortedList.get(curPos).getNumNodes();
+            for(int i = 0; i < tempPossibs; i++){
             //if(){
-                node rowEle = colNode.getDown();
+                rowNode = rowNode.getDown(); //keeps track of which row we are in for the chosen const col
+                node rowEle = rowNode; //going to be the basenode of the row we are adding to the sol
                 while(rowEle.getLeft() != null){ //sets rowEle = the baseNode of a given row
                     rowEle = rowEle.getLeft();
                 }
 
                 solNodes.add(rowEle);//adds the row to the solutions
+                
+
 
                 node tempRowNode = rowEle; //holds the position in the row that we are adding to the solution set
                 node tempColNode = rowEle; // holds the position in the col of one of the eles in the row above
                 node otherColNode = rowEle;
                 baseNode temp;
                 node sameConst = rowEle;
+                node otherSameConst = rowEle;
+                baseNode sameConstTop;
+                
+                removeVert(rowEle);                     //this might be mucking up the nodes declared above
+                while(rowEle.getRight() != null){
+                    rowEle = rowEle.getRight();
+                    removeVert(rowEle);
+                }
+                
                 while(tempRowNode.getRight() != null){ //this should remove all the rows that satisfy the same cols as rowEle
-                    tempColNode = tempRowNode.getRight();
-                    otherColNode = tempRowNode.getRight();
-                    tempRowNode = tempRowNode.getRight();
+                    tempColNode = tempRowNode.getRight();    //= 1 at (1,1) first col
+                    otherColNode = tempRowNode.getRight();   //= 1 at (1,1) first col
+                    tempRowNode = tempRowNode.getRight();    //= 1 at (1,1) first col  //we are moving this across chosen row
                     while(otherColNode.getUp() != null){
-                        otherColNode = otherColNode.getUp();
+                        otherColNode = otherColNode.getUp(); //= top of the first col
+                        tempColNode = tempColNode.getUp();   //= top of the first col
                     }
-                    temp = (baseNode)otherColNode;
+                    temp = (baseNode)otherColNode;           //= top of the first col
                     temp.setSat(true);
+                    temp.setNumNodes(0);
 
                     while(tempColNode.getDown() != null){
-                        sameConst = tempColNode.getDown();
-                        tempColNode = tempColNode.getDown();
+                        sameConst = tempColNode.getDown();    //= 2 at (1,1) first col
+                        tempColNode = tempColNode.getDown();  //= 2 at (1,1) first col
                         while(sameConst.getLeft() != null){
-                            sameConst = sameConst.getLeft();
+                            sameConst = sameConst.getLeft();  //= 2 at (1,1) far left
                         }
-                        System.out.println("uhm.... " + sameConst.getVal());
-                        System.out.println("wat: ");
-                        removeVert(sameConst);
+                        removeVert(sameConst);                  //= remove 1 at (1,1) far left
                         while(sameConst.getRight() != null){
+                            otherSameConst = sameConst.getRight();
                             sameConst = sameConst.getRight();
-                            System.out.println("hello!?.... " + sameConst.getVal());
                             removeVert(sameConst);
+                            while(otherSameConst.getUp() != null){
+                                otherSameConst = otherSameConst.getUp();
+                            }
+                            sameConstTop = (baseNode)otherSameConst;
+                            if(sameConstTop.getNumNodes() != 0)
+                                sameConstTop.setNumNodes(sameConstTop.getNumNodes()-1);
+                            else
+                                sameConstTop.setNumNodes(0);
                         }
-
                     }
                 }
-            //}
+                List<node> tempSols = new ArrayList<node>(); //will hold temp possible solutions. or indication that we failed
+                for(int j = 0; j < (sortedList.size()-1)/4; j++){
+                    baseNode dummyNode = ssf1.new baseNode(null, null, null, null, 0, false, "dummy node", 0);
+                    tempSols.add(dummyNode);
+                }
+                if(curPos == sortedList.size()-1){
+                    return solNodes;
+                } else{
+                    tempSols = solve_recur(sortedList, solNodes, satConts, curPos+1);
+                    if(tempSols.get(0).getVal() == -10){ //the recursive call didnt work, meaning we have to uncover everything and then try the next option
+
+
+                        node rowPutBack = solNodes.remove(solNodes.size()-1);
+
+                        node tempRowNode2 = rowPutBack; //holds the position in the row that we are adding to the solution set
+                        node tempColNode2 = rowPutBack; // holds the position in the col of one of the eles in the row above
+                        node tempColNode3 = rowPutBack;
+                        node otherColNode2 = rowPutBack;
+                        baseNode temp2;
+                        node sameConst2 = rowPutBack;
+                        node sameConst3 = rowPutBack;
+
+                        addVert(rowPutBack);                     //adds the baseRowNode back in
+
+                        while(rowPutBack.getRight() != null){
+                            rowPutBack = rowPutBack.getRight();
+                            addVert(rowPutBack);
+                        }
+
+                        while(tempRowNode2.getRight() != null){ //this should remove all the rows that satisfy the same cols as rowEle
+                            tempColNode2 = tempRowNode2.getRight();    //= 1 at (1,1) first col
+                            tempColNode3 = tempRowNode2.getRight();
+                            otherColNode2 = tempRowNode2.getRight();   //= 1 at (1,1) first col
+                            tempRowNode2 = tempRowNode2.getRight();    //= 1 at (1,1) first col  //we are moving this across chosen row
+                            while(otherColNode2.getUp() != null){
+                                otherColNode2 = otherColNode2.getUp(); //= top of the first col
+                                //tempColNode2 = tempColNode2.getUp();   //= top of the first col
+                            }
+                            temp2 = (baseNode)otherColNode2;           //= top of the first col
+                            temp2.setSat(false);
+         //MIGHT NOT HAVE TO DEAL WITH FIXING THIS. SHOULD NOT BE SETTING IT TO 0. SHOULD BE SETTING TO THE OLD VALUE
+                            temp2.setNumNodes(0);
+
+
+                            while(tempColNode3.getUp() != null){
+                                sameConst3 = tempColNode3.getUp();
+                                tempColNode3 = tempColNode3.getUp();
+                                while(sameConst3.getLeft() != null){
+                                    sameConst3 = sameConst3.getLeft();
+                                }
+                                addVert(sameConst3);
+                                while(sameConst3.getRight() != null){
+                                    sameConst3 = sameConst3.getRight();
+                                    addVert(sameConst3);
+                                }
+                            }
+                            while(tempColNode2.getDown() != null){
+                                sameConst2 = tempColNode2.getDown();    //= 2 at (1,1) first col
+                                tempColNode2 = tempColNode2.getDown();  //= 2 at (1,1) first col
+                                while(sameConst2.getLeft() != null){
+                                    sameConst2 = sameConst2.getLeft();  //= 2 at (1,1) far left
+                                }
+                                addVert(sameConst2);                  //= remove 1 at (1,1) far left
+                                while(sameConst2.getRight() != null){
+                                    sameConst2 = sameConst2.getRight();
+                                    addVert(sameConst2);
+                                }
+                            }
+                        }
+                    } else{ //the recursive call worked, then we done.
+                        return tempSols;
+                    }
+                }
+            }
             
-            solNodes = solve_recur(sortedList, solNodes, satConts, curPos);
         }
         
         
@@ -321,32 +421,54 @@ public class SudokuSolverFinal {
     }
     
     public static void removeVert(node nodeToRemove){
+        System.out.println("going in remove");
+        System.out.println("with value: " + nodeToRemove.getVal());
+        
         if(nodeToRemove.getUp() == null && nodeToRemove.getDown() == null){
             System.out.println("wtf we shouldnt be in here i dont think");
         } else {
             if(nodeToRemove.getUp() == null){
                 nodeToRemove.getDown().setUp(null);
-            } else{
-                System.out.println("!??!?!?!");
-                nodeToRemove.getDown().setUp(nodeToRemove.getUp());
-            }
-            if(nodeToRemove.getDown() == null){
+            } else if(nodeToRemove.getDown() == null){
                 nodeToRemove.getUp().setDown(null);
             } else{
                 nodeToRemove.getUp().setDown(nodeToRemove.getDown());
+                nodeToRemove.getDown().setUp(nodeToRemove.getUp());
             }
         }
+        
+        System.out.println("leaving remove");
     }
+    
+    public static void addVert(node nodeToAdd){
+        System.out.println("going in add");
+        System.out.println("with value: " + nodeToAdd.getVal());
+        
+        if(nodeToAdd.getUp() == null && nodeToAdd.getDown() == null){
+            System.out.println("wtf we shouldnt be in here i dont think");
+        } else {
+            if(nodeToAdd.getUp() == null){
+                nodeToAdd.getDown().setUp(nodeToAdd);
+            } else if(nodeToAdd.getDown() == null){
+                nodeToAdd.getUp().setDown(nodeToAdd);
+            } else{
+                nodeToAdd.getDown().setUp(nodeToAdd);
+                nodeToAdd.getUp().setDown(nodeToAdd);
+            }
+        }
+        
+        System.out.println("leaving add");
+    }
+    
+    
     public static void removeHoriz(node nodeToRemove){
         if(nodeToRemove.getRight() == null){
             nodeToRemove.getLeft().setRight(null);
-        } else{
-            nodeToRemove.getLeft().setRight(nodeToRemove.getRight());
-        }
-        if(nodeToRemove.getLeft() == null){
+        } else if(nodeToRemove.getLeft() == null){
             nodeToRemove.getRight().setLeft(null);
         } else{
             nodeToRemove.getRight().setLeft(nodeToRemove.getLeft());
+            nodeToRemove.getLeft().setRight(nodeToRemove.getRight());
         }
     }
     
@@ -730,9 +852,9 @@ public class SudokuSolverFinal {
             
             for(int row = 0; row < rowsCap; row++) {
                 for(int col = 0; col < sectionCap*4; col++) {
-                    System.out.print(gridDL[row][col] + " ");
+                    //System.out.print(gridDL[row][col] + " ");
                 }
-                System.out.println();
+                //System.out.println();
             }
             
             int sqrtN = (int)Math.sqrt(n);
@@ -1030,53 +1152,62 @@ public class SudokuSolverFinal {
             listOfColNodes.add(bnc4);
             listOfColNodes.add(bnc5);
             
+            /*
             System.out.println("gonna print out everything");
             System.out.println("-------------------------------------------------");
             System.out.println(listOfColNodes.get(0).getName());
             System.out.println(listOfColNodes.get(0).getNumNodes());
             System.out.println(listOfColNodes.get(0).getSat());
-            System.out.println(listOfColNodes.get(0).getDown().getVal());
+            System.out.println(listOfColNodes.get(0).getDown().getDown().getDown().getDown().getDown().getRight().getUp().getVal());
             System.out.println("-------------------------------------------------");
             System.out.println(listOfColNodes.get(1).getName());
             System.out.println(listOfColNodes.get(1).getNumNodes());
             System.out.println(listOfColNodes.get(1).getSat());
-            System.out.println(listOfColNodes.get(1).getDown().getVal());
+            System.out.println(listOfColNodes.get(1).getDown().getDown());//.getVal());
             System.out.println("-------------------------------------------------");
             System.out.println(listOfColNodes.get(2).getName());
             System.out.println(listOfColNodes.get(2).getNumNodes());
             System.out.println(listOfColNodes.get(2).getSat());
-            System.out.println(listOfColNodes.get(2).getDown().getVal());
+            System.out.println(listOfColNodes.get(2).getDown().getDown().getDown());//.getVal());
             System.out.println("-------------------------------------------------");
             System.out.println(listOfColNodes.get(3).getName());
             System.out.println(listOfColNodes.get(3).getNumNodes());
             System.out.println(listOfColNodes.get(3).getSat());
-            System.out.println(listOfColNodes.get(3).getDown().getVal());
+            System.out.println(listOfColNodes.get(3).getDown().getDown());//.getVal());
             System.out.println("-------------------------------------------------");
             System.out.println(listOfColNodes.get(4).getName());
             System.out.println(listOfColNodes.get(4).getNumNodes());
             System.out.println(listOfColNodes.get(4).getSat());
-            System.out.println(listOfColNodes.get(4).getDown().getVal());
+            System.out.println(listOfColNodes.get(4).getDown().getDown());//.getVal());
             System.out.println("-------------------------------------------------");
             System.out.println(listOfColNodes.get(5).getName());
             System.out.println(listOfColNodes.get(5).getNumNodes());
             System.out.println(listOfColNodes.get(5).getSat());
-            System.out.println(listOfColNodes.get(5).getDown().getVal());
+            System.out.println(listOfColNodes.get(5).getDown().getDown().getDown());//.getVal());
             System.out.println("-------------------------------------------------");
-            
+            */
             
             
             
             
             Collections.sort(listOfColNodes);
+            System.out.println("wejustsorted\n");
             
+
             
             
             System.out.println("bouta try and solve\n");
-            //List<node> solutions = solve(listOfColNodes);
+            List<node> solutions = solve(listOfColNodes);
             System.out.println("\nlel we made it out of solve");
             
             
             long endTime = System.currentTimeMillis();
+            
+            
+            for(int i = 0; i < solutions.size(); i++){
+                System.out.println(solutions.get(i).getVal());
+            }
+            
             System.out.println("time taken: " + (endTime - startTime)/1000.0 + " seconds");
             
         }
