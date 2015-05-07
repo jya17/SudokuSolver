@@ -23,7 +23,6 @@ import javax.swing.JTextField;
  */
 public class SudokuSolverFinal {
     
-    private static baseNode start; //DL
     private static square [][] board;
     private static square [][] origBoard;
     private static Map<Integer,List<Integer>> conflictsList;
@@ -694,13 +693,13 @@ public class SudokuSolverFinal {
                 }  
             }
             
-            for(int col = 0; col < sectionCap; col++){
+            for(int col = 0; col < sectionCap; col++){ //Section 1
                 for(int row = col*n; row < (col*n) + n; row++) {
                     gridDL[row][col] = 1;
                 }
             }
 
-            for(int col = sectionCap; col < (sectionCap*2); col++) {
+            for(int col = sectionCap; col < (sectionCap*2); col++) { //Section 2
                 for(int row = ((col - sectionCap)/n)*sectionCap; row < ((col-sectionCap)/n)*sectionCap + sectionCap; row++) {
                     if(row%n == col%n) { 
                         gridDL[row][col] = 1;
@@ -709,31 +708,89 @@ public class SudokuSolverFinal {
                 }
             }
             
-            for(int col = sectionCap*2; col < sectionCap*3; col++) {
+            for(int col = sectionCap*2; col < sectionCap*3; col++) { //Section 3
                 for(int count = 0; count < n; count++) {
                     gridDL[(sectionCap*count) + (col-(2*sectionCap))][col] = 1;
                 }
             }
-            
-            //PRINTING gridDL
-            for(int i = 0; i < regionCap; i++) {
-                for(int j = 0; j < regionCap; j++) {
-                    for(int k = 0; k < regionCap; k++) {
-                        for(int l = 0; l < regionCap; l++) {
-                            for(int m = 0; m < n; m++) {
-                                gridDL[i*(regionCap*sectionCap) + (j*sectionCap) + (k*regionCap*n) + (l*n) + m][(i*regionCap*n) + (k*n) + m + (regionCap*sectionCap)] = 1;
+            if(color == false) { //Section 4 of 2Darray
+                for(int i = 0; i < regionCap; i++) {
+                    for(int j = 0; j < regionCap; j++) {
+                        for(int k = 0; k < regionCap; k++) {
+                            for(int l = 0; l < regionCap; l++) {
+                                for(int m = 0; m < n; m++) {
+                                    gridDL[i*(regionCap*sectionCap) + (j*sectionCap) + (k*regionCap*n) + (l*n) + m][(i*regionCap*n) + (k*n) + m + (regionCap*sectionCap)] = 1;
+                                }   
                             }
                         }
                     }
                 }
             }
-            
+            //PRINTING gridDL
+            /*
             for(int row = 0; row < rowsCap; row++) {
                 for(int col = 0; col < sectionCap*4; col++) {
                     System.out.print(gridDL[row][col] + " ");
                 }
                 System.out.println();
             }
+            */
+                        
+            //Create row of baseNodes
+            baseNode start = ssf1.new baseNode(null, null, null, null, 0, false, "start", 0); //DL
+            //public baseNode(node left, node right, node up, node down, int cand, boolean sat, String name, int numNodes)
+            baseNode tempNode = ssf1.new baseNode(null, null, null, null, 0, false, "start", 0);
+            tempNode.setLeft(start);
+            for(int i = 0; i < colsCap; i++) {
+                baseNode newNode = ssf1.new baseNode(null, null, null, null, 0, false, "internal", 0);
+                newNode.setLeft(tempNode.getLeft());
+                tempNode.getLeft().setRight(newNode);
+                tempNode.setLeft(newNode);
+            }
+            //Create column of baseNodes
+            tempNode = ssf1.new baseNode(null, null, null, null, 0, false, "start", 0);
+            tempNode.setUp(start);
+            for(int i = 0; i < rowsCap; i++) {
+                baseNode newNode = ssf1.new baseNode(null, null, null, null, 0, false, "internal", 0);
+                newNode.setUp(tempNode.getUp());
+                tempNode.getUp().setDown(newNode);
+                tempNode.setUp(newNode);
+            }
+
+            //Create internal nodes for gridDL
+            baseNode tempR = ssf1.new baseNode(null, null, null, null, 0, false, "row", 0);
+            tempR.setDown(start.getDown());
+            baseNode tempC = ssf1.new baseNode(null, null, null, null, 0, false, "col", 0);
+            tempC.setRight(start.getRight());
+            baseNode temp = ssf1.new baseNode(null, null, null, null, 0, false, "temp", 0);
+            temp.setLeft(start);
+            baseNode temp2 = ssf1.new baseNode(null, null, null, null, 0, false, "temp2", 0);
+            temp2.setUp(start);
+            for(int i = 0; i < rowsCap; i++) {
+                temp.setLeft(tempR.getDown());
+                for(int j = 0; j < colsCap; j++) {
+                    temp2.setDown(tempC.getRight());//setUp(tempC.getRight());
+                    if(gridDL[i][j] == 1) {
+                        node tempN = ssf1.new node(null, null, null, null);
+                        tempN.setLeft(temp.getLeft());
+                        temp.getLeft().setRight(tempN);
+                        temp.setLeft(tempN);
+                        
+                        while(temp2.getDown() != null) {
+                            temp2.setRight(temp2.getDown());
+                            temp2.setDown(temp2.getDown().getDown());// = (baseNode) temp2.getDown();
+                        }
+                        
+                        tempN.setUp(temp2.getRight());
+                        temp2.getRight().setDown(tempN);
+                        //temp2.setUp(tempN);
+                    }
+                    tempC.setRight(tempC.getRight().getRight());
+                }
+                tempR.setDown(tempR.getDown().getDown());
+                tempC.setRight(start.getRight());
+            }
+            
             
             int sqrtN = (int)Math.sqrt(n);
             int curVal = 0;
@@ -778,6 +835,9 @@ public class SudokuSolverFinal {
                 }
             }
             
+            baseNode tempBaseR = ssf1.new baseNode(null, null, null, null, 0, false, "start", 0);
+            tempBaseR.setDown(start.getDown());
+            Map<Integer, Integer> colorMap = new HashMap<Integer, Integer>();
             
             //Added code for origBoard
             for(int i = 0; i < numRows; i++){
@@ -796,16 +856,17 @@ public class SudokuSolverFinal {
                         tempLine = tempLine.trim();
                     }
                     int index = tempLine.indexOf(","); //nonominos
-                    if(index != -1) { //
-                        String num = tempLine.substring(0, index); //
-                        curColor = Integer.parseInt(tempLine.substring(index+1)); //
-                        curVal = Integer.parseInt(num);//
-                        board[i][j].setColor(curColor);//
-                        origBoard[i][j].setColor(curColor); //
+                    if(index != -1) { 
+                        String num = tempLine.substring(0, index); 
+                        curColor = Integer.parseInt(tempLine.substring(index+1)); 
+                        curVal = Integer.parseInt(num);
+                        board[i][j].setColor(curColor);
+                        origBoard[i][j].setColor(curColor); 
+                        colorMap.put((i*n) + j, curColor);
                     } else {
-                        curVal = Integer.parseInt(tempLine);
+                        curVal = Integer.parseInt(tempLine); //normal board
                     }
-                    board[i][j].setValue(curVal);// = Integer.parseInt(tempLine);
+                    board[i][j].setValue(curVal);
                     origBoard[i][j].setValue(curVal);
                     board[i][j].setPosition(i*numCols + j);
                     origBoard[i][j].setPosition(i*numCols + j);
@@ -820,7 +881,94 @@ public class SudokuSolverFinal {
                         board[i][j].setOptions(tempList);
                         origBoard[i][j].setOptions(tempList);
                     }
+                    
+                    for(int k = 1; k < n; k++) {
+                        tempBaseR = (baseNode) tempBaseR.getDown();
+                        tempBaseR.setCand(k);
+                    }
+                    
+                    int readIn = (i*n) + j; //rows*n + cols = # of cells read in so far, including current cell
+                    int given = 0;
+                    baseNode current = ssf1.new baseNode(null, null, null, null, 0, false, "start", 0);
+                    current.setDown(start.getDown());
+                    if(curVal != 0) { //read in value is a given
+                        for(int s = 1; s < n; s++) { //set every cand row that != curVal to -1
+                            if(s != curVal) {
+                                for(int t = 0; t < colsCap; t++) {
+                                    gridDL[(readIn*n) - (given*(n-1)) + s][t] = -1;
+                                }
+                            }
+                        }
+                        for(int u = 0; u < ((readIn*n) - (given*(n-1))); u++) { //could optimize by not restarting from head
+                            current = (baseNode) current.getDown();
+                        }
+                        for(int v = 1; v < n; v++) {
+                            current = (baseNode) current.getDown();
+                            if(v != curVal) {
+                                removeVert(current); //check removeVert
+                                //REMOVE MORE NODES
+                                while(current.getRight() != null) {
+                                    current = (baseNode) current.getRight();
+                                    removeVert(current); 
+                                }
+                            }
+                        }
+                        given++;
+                    } else {
+                        //Leave those rows alone
+                    } 
+                    
+                    
+                    
+                } //for cols
+            } //for rows
+            
+            for(int row = 0; row < rowsCap; row++) {
+                for(int col = 0; col < sectionCap*4; col++) {
+                    if(gridDL[row][col] != -1)
+                    System.out.print(gridDL[row][col] + " ");
                 }
+                System.out.println();
+            }
+            
+            
+            if(color == true) { //Section 4 of 2Darray
+                for(int i = 0; i < regionCap; i++) {
+                    for(int j = 0; j < regionCap; j++) {
+                        for(int k = 0; k < regionCap; k++) {
+                            for(int l = 0; l < regionCap; l++) {
+                                for(int m = 0; m < n; m++) {
+                                    //gridDL[i*(regionCap*sectionCap) + (j*sectionCap) + (k*regionCap*n) + (l*n) + m][(i*regionCap*n) + (k*n) + m + (regionCap*sectionCap)] = 1;
+                                   //if statement to see if color matches
+                                    gridDL[i][regionCap*sectionCap + k*n + i%n] = 1;
+                                }   
+                            }
+                        }
+                    }
+                }
+            }
+            //PRINT
+            /*
+            for(int row = 0; row < rowsCap; row++) {
+                for(int col = 0; col < sectionCap*4; col++) {
+                    System.out.print(gridDL[row][col] + " ");
+                }
+                System.out.println();
+            }
+            */
+            //Count the number in a column
+            baseNode countCol = ssf1.new baseNode(null, null, null, null, 0, false, "count", 0);
+            countCol.setRight(start.getRight());
+            int counter = 0;
+            for(int i = 0; i < colsCap; i++) {
+                counter = 0;
+                for(int j = 0; j < rowsCap; j++) {
+                    if(gridDL[j][i] == 1) {
+                        counter++;
+                    }
+                }
+                countCol.getRight().setVal(counter);
+                countCol.setRight(countCol.getRight().getRight());
             }
             
             //add same colored as conflicts
@@ -848,10 +996,8 @@ public class SudokuSolverFinal {
                     }
                 }
             }
+
             
-
-
-
             
             //createGUI(origBoard, numCols, "SOLVE", color);
             
