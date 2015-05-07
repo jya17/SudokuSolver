@@ -121,14 +121,16 @@ public class SudokuSolverFinal {
         private boolean sat;
         private String name;
         private int numNodes;
+        private int prevNumNodes;
         private int rowPos;
         private int colPos;
-        public baseNode(node left, node right, node up, node down, int cand, boolean sat, String name, int numNodes, int rowPos, int colPos){
+        public baseNode(node left, node right, node up, node down, int cand, boolean sat, String name, int numNodes, int prevNumNodes, int rowPos, int colPos){
             super(left, right, up, down);
             this.cand = cand;
             this.sat = sat;
             this.name = name;
             this.numNodes = numNodes;
+            this.prevNumNodes = prevNumNodes;
             this.rowPos = rowPos;
             this.colPos = colPos;
         }        
@@ -162,6 +164,12 @@ public class SudokuSolverFinal {
         }
         public void setNumNodes(int numNodes){
             this.numNodes = numNodes;
+        }
+        public int getPrevNumNodes(){
+            return prevNumNodes;
+        }
+        public void setPrevNumNodes(int prevNumNodes){
+            this.prevNumNodes = prevNumNodes;
         }
         public int getRowPos(){
             return rowPos;
@@ -253,15 +261,10 @@ public class SudokuSolverFinal {
         int[] satConts = new int[(sortedList.size()-1)/4];
         
         for(int i = 0; i < (sortedList.size()-1)/4; i++){
-            baseNode dummyNode = ssf1.new baseNode(null, null, null, null, -72, false, "dummy node", 0, 0, 0);
+            baseNode dummyNode = ssf1.new baseNode(null, null, null, null, -72, false, "dummy node", 0, 0, 0, 0);
             //solNodes.add(dummyNode);
             satConts[i] = 0;
         }
-        
-        System.out.println("THIS IS BEFORE SOLVE FOR POS 21");
-        System.out.println("numNodes: " + sortedList.get(21).getNumNodes());
-        System.out.println(sortedList.get(21).getCand());//.getDown());//.getDown());
-        
         
         //System.out.println(((baseNode)sortedList.get(1)).getNumNodes());
         
@@ -280,6 +283,8 @@ public class SudokuSolverFinal {
     }
     
     public static List<baseNode> solve_recur(List<baseNode> sortedList, List<baseNode> solNodes, int[] satConts, int curPos){
+        System.out.println("THIS IS (0,2). NUMNODES = " + sortedList.get(3).getNumNodes());
+        
         while(sortedList.get(curPos).getSat() == true){ //finds a column that has not been satisfied yet
             curPos++;
         }
@@ -287,7 +292,7 @@ public class SudokuSolverFinal {
             if(sortedList.get(curPos).getDown() == null){ //failed somewhere. need to go back up a level
                 List<baseNode> tempFail = new ArrayList<baseNode>(); //will hold temp possible solutions. or indication that we failed
                 for(int j = 0; j < 1; j++){
-                    baseNode dummyNode = ssf1.new baseNode(null, null, null, null, 0, false, "dummy node", 0, 0, 0);
+                    baseNode dummyNode = ssf1.new baseNode(null, null, null, null, 0, false, "dummy node", 0, 0, 0, 0);
                     tempFail.add(dummyNode);
                 }
                 tempFail.get(0).setVal(-10);
@@ -298,24 +303,25 @@ public class SudokuSolverFinal {
         baseNode colNode = sortedList.get(curPos); //baseNode of the column we are about to cover
         node rowNode = sortedList.get(curPos);
         int tempPossibs = sortedList.get(curPos).getNumNodes();
-        if(curPos == 21){
-            System.out.println("THIS IS CURPOS OF 21");
-            System.out.println("numNodes: " + sortedList.get(21).getNumNodes());
-            System.out.println(sortedList.get(21).getDown().getDown());
+        int oldNumNodes = 0;
+        
+        node veryTempNode = sortedList.get(curPos);
+        node otherVeryTempNode = sortedList.get(curPos);
+        System.out.print("trying these values: ");
+        while(veryTempNode.getDown() != null){
+            otherVeryTempNode = veryTempNode.getDown();
+            veryTempNode = veryTempNode.getDown();
+            while(otherVeryTempNode.getLeft() != null){
+                otherVeryTempNode = otherVeryTempNode.getLeft();
+            }
+            System.out.println(((baseNode)otherVeryTempNode).getCand() + " at pos: ( " + ((baseNode)otherVeryTempNode).getRowPos() + ", " + ((baseNode)otherVeryTempNode).getColPos() + ")");
+
         }
         for(int i = 0; i < tempPossibs; i++){
-        //if(){
-            if(rowNode.getDown() == null){
-                System.out.println("HERE!!!!!!!!!!!!!!!!!");
-                System.out.println("curPos: " + curPos + ", numNodes: " + sortedList.get(curPos).getNumNodes() + ", tempPos: " + i);
-            }
+            System.out.println("**************THIS IS (0,2). NUMNODES = " + sortedList.get(3).getNumNodes()+"*********");
+        
+            System.out.println("in for. i: " + i + ", tempPos: " + tempPossibs);
             rowNode = rowNode.getDown(); //keeps track of which row we are in for the chosen const col
-            
-            
-
-//CHECK HERE IF FAIL
-
-
             node rowEle = rowNode; //going to be the basenode of the row we are adding to the sol
             baseNode rowSol;// = rowNode;
             while(rowEle.getLeft() != null){ //sets rowEle = the baseNode of a given row
@@ -324,7 +330,8 @@ public class SudokuSolverFinal {
             rowSol = (baseNode)rowEle.getRight().getLeft();
 
             solNodes.add(rowSol);//adds the row to the solutions
-            System.out.println("adding a row");
+            System.out.print("adding a row | ");
+            System.out.println(rowSol.getCand() + " at pos: ( " + rowSol.getRowPos() + ", " + rowSol.getColPos() + ")");
 
 
 
@@ -352,6 +359,8 @@ public class SudokuSolverFinal {
                 }
                 temp = (baseNode)otherColNode;           //= top of the first col
                 temp.setSat(true);
+                int dubWtv = temp.getNumNodes();
+                temp.setPrevNumNodes(dubWtv);
                 temp.setNumNodes(0);
 
                 while(tempColNode.getDown() != null){
@@ -369,16 +378,21 @@ public class SudokuSolverFinal {
                             otherSameConst = otherSameConst.getUp();
                         }
                         sameConstTop = (baseNode)otherSameConst;
-                        if(sameConstTop.getNumNodes() != 0)
+                        if(sameConstTop.getNumNodes() != 0){
+                            int wtv = sameConstTop.getNumNodes();
+                            sameConstTop.setPrevNumNodes(wtv);
                             sameConstTop.setNumNodes(sameConstTop.getNumNodes()-1);
-                        else
+                        }
+                        else{
+                            sameConstTop.setPrevNumNodes(0);
                             sameConstTop.setNumNodes(0);
+                        }
                     }
                 }
             }
             List<baseNode> tempSols = new ArrayList<baseNode>(); //will hold temp possible solutions. or indication that we failed
             for(int j = 0; j < (sortedList.size()-1)/4; j++){
-                baseNode dummyNode = ssf1.new baseNode(null, null, null, null, 0, false, "dummy node", 0, 0, 0);
+                baseNode dummyNode = ssf1.new baseNode(null, null, null, null, 0, false, "dummy node", 0, 0, 0, 0);
                 tempSols.add(dummyNode);
             }
             if(curPos == sortedList.size()-1){
@@ -389,7 +403,10 @@ public class SudokuSolverFinal {
 
 
                     node rowPutBack = solNodes.remove(solNodes.size()-1);
-                    System.out.println("removing a row");
+                    baseNode rowPutBack2 = (baseNode)rowPutBack;
+                    System.out.print("removing a row | ");
+                    System.out.println(rowPutBack2.getCand() + " at pos: ( " + rowPutBack2.getRowPos() + ", " + rowPutBack2.getColPos() + ")");
+
 
                     node tempRowNode2 = rowPutBack; //holds the position in the row that we are adding to the solution set
                     node tempColNode2 = rowPutBack; // holds the position in the col of one of the eles in the row above
@@ -398,6 +415,10 @@ public class SudokuSolverFinal {
                     baseNode temp2;
                     node sameConst2 = rowPutBack;
                     node sameConst3 = rowPutBack;
+                    node otherSameConst2;
+                    node otherSameConst3;
+                    baseNode sameConst2Top;
+                    baseNode sameConst3Top;
 
                     addVert(rowPutBack);                     //adds the baseRowNode back in
 
@@ -417,9 +438,7 @@ public class SudokuSolverFinal {
                         }
                         temp2 = (baseNode)otherColNode2;           //= top of the first col
                         temp2.setSat(false);
-     //MIGHT NOT HAVE TO DEAL WITH FIXING THIS. SHOULD NOT BE SETTING IT TO 0. SHOULD BE SETTING TO THE OLD VALUE
-                        temp2.setNumNodes(0);
-
+                        temp2.setNumNodes(temp2.getPrevNumNodes());
 
                         while(tempColNode3.getUp() != null){
                             sameConst3 = tempColNode3.getUp();
@@ -429,8 +448,14 @@ public class SudokuSolverFinal {
                             }
                             addVert(sameConst3);
                             while(sameConst3.getRight() != null){
+                                otherSameConst3 = sameConst3.getRight();
                                 sameConst3 = sameConst3.getRight();
                                 addVert(sameConst3);
+                                while(otherSameConst3.getUp() != null){
+                                    otherSameConst3 = otherSameConst3.getUp();
+                                }
+                                sameConst3Top = (baseNode)otherSameConst3;
+                                sameConst3Top.setNumNodes(sameConst3Top.getPrevNumNodes());
                             }
                         }
                         while(tempColNode2.getDown() != null){
@@ -441,8 +466,14 @@ public class SudokuSolverFinal {
                             }
                             addVert(sameConst2);                  //= remove 1 at (1,1) far left
                             while(sameConst2.getRight() != null){
+                                otherSameConst2 = sameConst2.getRight();
                                 sameConst2 = sameConst2.getRight();
                                 addVert(sameConst2);
+                                while(otherSameConst2.getUp() != null){
+                                    otherSameConst2 = otherSameConst2.getUp();
+                                }
+                                sameConst2Top = (baseNode)otherSameConst2;
+                                sameConst2Top.setNumNodes(sameConst2Top.getPrevNumNodes());
                             }
                         }
                     }
@@ -454,10 +485,11 @@ public class SudokuSolverFinal {
         }//for
         
         
-        System.out.println("none of the value worked and we need to recurse back up a level");
+        System.out.println("none of the value worked at pos: (" + ((baseNode)otherVeryTempNode).getRowPos() + ", " + ((baseNode)otherVeryTempNode).getColPos() + ") and we need to recurse back up a level");
+
         List<baseNode> tempFail2 = new ArrayList<baseNode>(); //will hold temp possible solutions. or indication that we failed
         for(int j = 0; j < 1; j++){
-            baseNode dummyNode2 = ssf1.new baseNode(null, null, null, null, 0, false, "dummy node", 0, 0, 0);
+            baseNode dummyNode2 = ssf1.new baseNode(null, null, null, null, 0, false, "dummy node", 0, 0, 0, 0);
             tempFail2.add(dummyNode2);
         }
         tempFail2.get(0).setVal(-10);
@@ -945,38 +977,38 @@ public class SudokuSolverFinal {
 
         
             //Create row of baseNodes
-            baseNode start = ssf1.new baseNode(null, null, null, null, -99, false, "start", 0, 0, 0); //DL
+            baseNode start = ssf1.new baseNode(null, null, null, null, -99, false, "start", 0, 0, 0, 0); //DL
             //public baseNode(node left, node right, node up, node down, int cand, boolean sat, String name, int numNodes)
-            baseNode tempNode = ssf1.new baseNode(null, null, null, null, 0, false, "start", 0, 0, 0);
+            baseNode tempNode = ssf1.new baseNode(null, null, null, null, 0, false, "start", 0, 0, 0, 0);
             tempNode.setLeft(start);
             for(int i = 0; i < colsCap; i++) {
-                baseNode newNode = ssf1.new baseNode(null, null, null, null, i, false, "internal", 0, 0, 0);
+                baseNode newNode = ssf1.new baseNode(null, null, null, null, i, false, "internal", 0, 0, 0, 0);
                 newNode.setLeft(tempNode.getLeft());
                 tempNode.getLeft().setRight(newNode);
                 tempNode.setLeft(newNode);
             }
             //Create column of baseNodes
-            tempNode = ssf1.new baseNode(null, null, null, null, 0, false, "start", 0, 0, 0);
+            tempNode = ssf1.new baseNode(null, null, null, null, 0, false, "start", 0, 0, 0, 0);
             tempNode.setUp(start);
             int tempRow = 0;
             int tempCol = 0;
             for(int i = 0; i < rowsCap; i++) {
                 tempRow = i/sectionCap;
                 tempCol = i/n%n;
-                baseNode newNode = ssf1.new baseNode(null, null, null, null, (i%n)+1, false, "internal", 0, tempRow, tempCol);
+                baseNode newNode = ssf1.new baseNode(null, null, null, null, (i%n)+1, false, "internal", 0, 0, tempRow, tempCol);
                 newNode.setUp(tempNode.getUp());
                 tempNode.getUp().setDown(newNode);
                 tempNode.setUp(newNode);
             }
 
             //Create internal nodes for gridDL
-            baseNode tempR = ssf1.new baseNode(null, null, null, null, 0, false, "row", 0, 0, 0);
+            baseNode tempR = ssf1.new baseNode(null, null, null, null, 0, false, "row", 0, 0, 0, 0);
             tempR.setDown(start.getDown());
-            baseNode tempC = ssf1.new baseNode(null, null, null, null, 0, false, "col", 0, 0, 0);
+            baseNode tempC = ssf1.new baseNode(null, null, null, null, 0, false, "col", 0, 0, 0, 0);
             tempC.setRight(start.getRight());
-            baseNode temp = ssf1.new baseNode(null, null, null, null, 0, false, "temp", 0, 0, 0);
+            baseNode temp = ssf1.new baseNode(null, null, null, null, 0, false, "temp", 0, 0, 0, 0);
             temp.setLeft(start);
-            baseNode temp2 = ssf1.new baseNode(null, null, null, null, 0, false, "temp2", 0, 0, 0);
+            baseNode temp2 = ssf1.new baseNode(null, null, null, null, 0, false, "temp2", 0, 0, 0, 0);
             temp2.setUp(start);
             for(int i = 0; i < rowsCap; i++) {
                 temp.setLeft(tempR.getDown());
@@ -1047,7 +1079,7 @@ public class SudokuSolverFinal {
                 }
             }
             
-            baseNode tempBaseR = ssf1.new baseNode(null, null, null, null, 0, false, "start", 0, 0, 0);
+            baseNode tempBaseR = ssf1.new baseNode(null, null, null, null, 0, false, "start", 0, 0, 0, 0);
             tempBaseR.setDown(start.getDown());
             
             
@@ -1116,7 +1148,7 @@ public class SudokuSolverFinal {
                         tempBaseR.setCand(k);
                     }
                     
-                    int readIn = (i*n) + j; //rows*n + cols = # of cells read in so far, including current cell
+                    /*int readIn = (i*n) + j; //rows*n + cols = # of cells read in so far, including current cell
                     int given = 0;
                     if(curVal != 0) { //read in value is a given
                         for(int s = 1; s < n+1; s++) { //set every cand row that != curVal to -1
@@ -1127,12 +1159,12 @@ public class SudokuSolverFinal {
                             }
                         }
                         given++;
-                    }
+                    }*/
 //                        for(int u = 0; u < ((readIn*n) - (given*(n-1))); u++) { //could optimize by not restarting from head
 //                            current = current.getDown();
 //                            tempCurRow = tempCurRow.getDown();
 //                        }
-                    for(int v = 1; v < n+1; v++) {
+                    /*for(int v = 1; v < n+1; v++) {
                         tempCurRow = current.getDown();
                         current = current.getDown();
                         if(curVal == 0){
@@ -1146,12 +1178,77 @@ public class SudokuSolverFinal {
                                 }
                             }
                         }
-                    } 
+                    } */
                     
                     
                     
                 } //for cols
             } //for rows
+            
+            int tempRow1 = 0;
+            int tempCol1 = 0;
+            for(int i = 0; i < numRows; i++){
+                for(int j = 0; j < numCols; j++){
+                    
+                    List<Integer> valsOfConf = new ArrayList<Integer>();
+                    for(int x: conflictsList.get(i*n+j)){
+                        tempRow1 = x/n;
+                        tempCol1 = x%n;
+                        if(!valsOfConf.contains(board[tempRow1][tempCol1].getValue())){
+                            valsOfConf.add(board[tempRow1][tempCol1].getValue());
+                        }
+                    }
+                    
+                    int readIn = (i*n) + j; //rows*n + cols = # of cells read in so far, including current cell
+                    int given = 0;
+                    if(board[i][j].getValue() != 0) { //read in value is a given
+                        for(int s = 1; s < n+1; s++) { //set every cand row that != curVal to -1
+                            if(s != board[i][j].getValue()) {
+                                for(int t = 0; t < colsCap; t++) {
+                                    gridDL[(readIn*n) - (given*(n-1)) + (s-1)][t] = -1;
+                                }
+                            }
+                        }
+                        given++;
+                    } else{
+                        for(int s = 1; s < n+1; s++){
+                            for(int x: valsOfConf){
+                                if(s == x){
+                                    for(int t = 0; t < colsCap; t++){
+                                        gridDL[(readIn*n) - (given*(n-1)) + (s-1)][t] = -1;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    for(int v = 1; v < n+1; v++) {
+                        tempCurRow = current.getDown();
+                        current = current.getDown();
+                        if(board[i][j].getValue() == 0){
+                            for(int x: valsOfConf){
+                                if(v == x){
+                                    removeVert(current);
+                                    while(tempCurRow.getRight() != null){
+                                        tempCurRow = tempCurRow.getRight();
+                                        removeVert(tempCurRow);
+                                    }
+                                }
+                            }
+                        } else {
+                            if(v != board[i][j].getValue()) {
+                                removeVert(current); //check removeVert
+                                //REMOVE MORE NODES
+                                while(tempCurRow.getRight() != null) {
+                                    tempCurRow = tempCurRow.getRight();
+                                    removeVert(tempCurRow); 
+                                }
+                            }
+                        }
+                    } 
+                    
+                }
+            }
             
 //            for(int row = 0; row < rowsCap; row++) {
 //                for(int col = 0; col < sectionCap*4; col++) {
@@ -1164,16 +1261,15 @@ public class SudokuSolverFinal {
             
 
             //PRINT
-            /*
-            for(int row = 0; row < rowsCap; row++) {
-                for(int col = sectionCap*3; col < sectionCap*4; col++) {
+            
+            /*for(int row = 0; row < rowsCap; row++) {
+                for(int col = 0; col < sectionCap*4; col++) {
                     System.out.print(gridDL[row][col] + " ");
                 }
                 System.out.println();
-            }
-            */
+            }*/
             //Count the number in a column
-            baseNode countCol = ssf1.new baseNode(null, null, null, null, 0, false, "count", 0, 0, 0);
+            baseNode countCol = ssf1.new baseNode(null, null, null, null, 0, false, "count", 0, 0, 0, 0);
             countCol.setRight(start.getRight());
             int counter = 0;
             for(int i = 0; i < colsCap; i++) {
@@ -1397,7 +1493,7 @@ public class SudokuSolverFinal {
             listOfColNodes.add(bnc5);
             
             List<baseNode> listOfColNodes1 = new ArrayList<baseNode>();
-            baseNode tempTop = ssf1.new baseNode(null, null, null, null, 0, false, "top_of_col", 0, 0, 0);
+            baseNode tempTop = ssf1.new baseNode(null, null, null, null, 0, false, "top_of_col", 0, 0, 0, 0);
             tempTop.setRight(start.getRight());
             tempTop.setLeft(start.getRight().getLeft());
             listOfColNodes1.add((baseNode)tempTop.getLeft());
@@ -1444,13 +1540,10 @@ public class SudokuSolverFinal {
             
             
             
-            for(int i = 0; i < 81; i++){
-                System.out.println(listOfColNodes1.get(i).getNumNodes());
-            }
+            
             
             //Collections.sort(listOfColNodes);
-            Collections.sort(listOfColNodes1);
-            System.out.println("wejustsorted\n");
+            //Collections.sort(listOfColNodes1);
             
 
             
